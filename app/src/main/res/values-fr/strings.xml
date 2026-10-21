@@ -103,4 +103,32 @@
     <string name="widget_description">Affiche votre dernier message en plein écran</string>
     <string name="widget_open_last">Afficher le dernier message : %1$s</string>
     <string name="widget_open_app">Ouvrir Bigly</string>
+    <!-- Préréglages de couleurs -->
+    <string name="preset_yellow_on_black">Jaune sur noir</string>
+    <string name="preset_green_on_black">Vert sur noir</string>
+    <string name="preset_orange_on_black">Orange sur noir</string>
+    <string name="preset_cyan_on_black">Cyan sur noir</string>
+    <string name="preset_pink_on_black">Rose sur noir</string>
+    <string name="preset_red_on_white">Rouge sur blanc</string>
+    <string name="preset_blue_on_white">Bleu sur blanc</string>
+    <string name="preset_black_on_yellow">Noir sur jaune</string>
+    <string name="preset_white_on_red">Blanc sur rouge</string>
+    <string name="preset_white_on_blue">Blanc sur bleu</string>
+    <string name="preset_white_on_green">Blanc sur vert</string>
+    <string name="colors_custom">Personnalisées</string>
+    <string name="control_colors">Couleurs : %1$s</string>
+
+    <!-- Export -->
+    <string name="control_export">Exporter en image</string>
+    <string name="export_chooser_title">Partager l’image</string>
+    <string name="export_failed">L’image n’a pas pu être créée.</string>
+
+    <!-- Page historique et raccourcis du lanceur -->
+    <string name="history_screen_title">Historique</string>
+    <string name="shortcut_new">Nouveau message</string>
+    <string name="shortcut_new_long">Écrire un nouveau message</string>
+    <string name="shortcut_last">Dernier message</string>
+    <string name="shortcut_last_long">Afficher le dernier message</string>
+    <string name="shortcut_history">Historique</string>
+    <string name="shortcut_history_long">Ouvrir l’historique</string>
 </resources>

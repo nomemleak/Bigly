@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Bigly - show text in huge letters on your screen.
+  Copyright (C) 2026 Bigly contributors
+  SPDX-License-Identifier: GPL-3.0-or-later
+-->
+<!-- Launcher shortcut icon: white symbol on the dark circle of the app icon. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+    <path android:fillColor="#FF111318" android:pathData="M24,2a22,22 0 1 1 0,44a22,22 0 1 1 0,-44z" />
+    <path android:fillColor="#FFFFFFFF" android:fillType="evenOdd" android:pathData="M17,13 H26 A5,5 0 0 1 26,23 A6,6 0 0 1 26,35 H17 Z M22,17 V20 H26 A1.5,1.5 0 0 0 26,17 Z M22,27 V31 H26 A2,2 0 0 0 26,27 Z" />
+</vector>

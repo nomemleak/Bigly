@@ -61,19 +61,34 @@ object FontSizeFitter {
      * Tells whether a soft line break falls in the middle of a word.
      *
      * [lineEnds] holds the exclusive end offset of every visual line, as reported
-     * by the text layout. A break is fine when it happens next to whitespace or
-     * right after a hyphen or a slash.
+     * by the text layout. A break is fine next to whitespace, right after a hyphen
+     * or a slash, and next to an emoji or an ideograph (scripts such as Chinese or
+     * Japanese, and emoji sequences, may wrap between characters).
      */
     fun breaksInsideWord(text: String, lineEnds: List<Int>): Boolean {
         for (end in lineEnds.dropLast(1)) {
             if (end <= 0 || end >= text.length) continue
-            val before = text[end - 1]
-            val after = text[end]
-            if (before.isWhitespace() || after.isWhitespace()) continue
-            if (before in BREAKABLE_PUNCTUATION) continue
+            val before = text.codePointBefore(end)
+            val after = text.codePointAt(end)
+            if (Character.isWhitespace(before) || Character.isWhitespace(after)) continue
+            if (before < 0x10000 && before.toChar() in BREAKABLE_PUNCTUATION) continue
+            if (Emoji.isEmojiPart(before) || Emoji.isEmojiPart(after)) continue
+            if (isBreakableScript(before) || isBreakableScript(after)) continue
             return true
         }
         return false
+    }
+
+    private fun isBreakableScript(codePoint: Int): Boolean {
+        if (Character.isIdeographic(codePoint)) return true
+        return when (Character.UnicodeScript.of(codePoint)) {
+            Character.UnicodeScript.HIRAGANA,
+            Character.UnicodeScript.KATAKANA,
+            Character.UnicodeScript.HANGUL,
+            Character.UnicodeScript.THAI,
+            -> true
+            else -> false
+        }
     }
 
     /** Text shown in the scrolling (LED banner) mode: always a single line. */

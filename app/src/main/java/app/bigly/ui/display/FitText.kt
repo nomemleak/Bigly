@@ -27,50 +27,42 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.rememberTextMeasurer
-import androidx.compose.ui.unit.Constraints
-import app.bigly.text.FontSizeFitter
-
-/** Smallest size tried, in pixels. Very long messages end up at this size. */
-private const val MIN_FONT_PX = 8f
 
 /**
  * Shows [text] with the largest font that fits the available space.
  * Explicit line breaks are kept; lines may also wrap between words, never inside one.
+ *
+ * [brush], when given, paints the letters (rainbow effect). It is read during
+ * composition only by the inner text, so changing it never measures the text again.
  */
 @Composable
-fun FitText(text: String, style: TextStyle, modifier: Modifier = Modifier) {
+fun FitText(
+    text: String,
+    style: TextStyle,
+    modifier: Modifier = Modifier,
+    brush: (() -> Brush?)? = null,
+) {
     BoxWithConstraints(modifier, contentAlignment = Alignment.Center) {
         val measurer = rememberTextMeasurer()
         val density = LocalDensity.current
         val maxWidth = constraints.maxWidth
         val maxHeight = constraints.maxHeight
 
-        val fontSize = remember(text, style, maxWidth, maxHeight, density) {
-            val px = FontSizeFitter.largestFitting(
-                min = MIN_FONT_PX,
-                max = maxHeight.toFloat().coerceAtLeast(MIN_FONT_PX),
-                precision = 1f,
-            ) { sizePx ->
-                val layout = measurer.measure(
-                    text = text,
-                    style = style.copy(fontSize = with(density) { sizePx.toSp() }),
-                    softWrap = true,
-                    constraints = Constraints(maxWidth = maxWidth),
-                    skipCache = true,
-                )
-                val lineEnds = List(layout.lineCount) { layout.getLineEnd(it) }
-                layout.size.height <= maxHeight &&
-                    !layout.hasVisualOverflow &&
-                    !FontSizeFitter.breaksInsideWord(text, lineEnds)
-            }
-            with(density) { px.toSp() }
+        val sized = remember(text, style, maxWidth, maxHeight, density) {
+            style.copy(fontSize = fitMultilineFontSize(measurer, text, style, maxWidth, maxHeight, density))
         }
 
         Box(contentAlignment = Alignment.Center) {
-            Text(text = text, style = style.copy(fontSize = fontSize), softWrap = true)
+            val currentBrush = brush?.invoke()
+            Text(
+                text = text,
+                style = if (currentBrush != null) sized.copy(brush = currentBrush) else sized,
+                softWrap = true,
+            )
         }
     }
 }

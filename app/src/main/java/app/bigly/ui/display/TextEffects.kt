@@ -22,12 +22,9 @@ package app.bigly.ui.display
 
 import androidx.compose.runtime.State
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.graphics.graphicsLayer
 import app.bigly.data.TextEffect
@@ -45,6 +42,23 @@ private val RainbowColors = listOf(
     Color(0xFFAF52DE),
     Color(0xFFFF3B30),
 )
+
+/** Width, in pixels, of one full rainbow cycle. */
+private const val RAINBOW_PERIOD_PX = 1200f
+
+/**
+ * Rainbow gradient for the letters. It is set as the text brush rather than drawn
+ * over the text, so color emojis keep their own colors. [seconds] moves the colors.
+ */
+fun rainbowBrush(seconds: Float, tempo: Float, animate: Boolean): Brush {
+    val shift = if (animate) (seconds * 0.35f * tempo % 1f) * RAINBOW_PERIOD_PX else 0f
+    return Brush.linearGradient(
+        colors = RainbowColors,
+        start = Offset(shift, 0f),
+        end = Offset(shift + RAINBOW_PERIOD_PX, RAINBOW_PERIOD_PX * 0.25f),
+        tileMode = TileMode.Repeated,
+    )
+}
 
 /**
  * Applies one animated effect to the content.
@@ -88,20 +102,6 @@ fun Modifier.textEffect(
         }
     }
 
+    // Painted by the text brush, see rainbowBrush().
     TextEffect.RAINBOW -> this
-        .graphicsLayer { compositingStrategy = CompositingStrategy.Offscreen }
-        .drawWithContent {
-            drawContent()
-            val width = size.width.coerceAtLeast(1f)
-            val shift = if (animate) (clock.value * 0.35f * tempo % 1f) * width else 0f
-            drawRect(
-                brush = Brush.linearGradient(
-                    colors = RainbowColors,
-                    start = Offset(shift, 0f),
-                    end = Offset(shift + width, size.height * 0.25f),
-                    tileMode = TileMode.Repeated,
-                ),
-                blendMode = BlendMode.SrcIn,
-            )
-        }
 }

@@ -37,14 +37,24 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.rememberTextMeasurer
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import app.bigly.R
 import app.bigly.data.AppSettings
+import app.bigly.data.ColorPreset
 import app.bigly.data.DisplayMode
 import app.bigly.data.TextEffect
 import app.bigly.ui.theme.DisplayTextStyle
+
+private val TextPadding = 12.dp
 
 /**
  * The full screen message. A tap anywhere shows or hides the controls.
@@ -58,17 +68,30 @@ fun DisplayScreen(
     orientationLock: OrientationLock,
     onOrientationLockChange: (OrientationLock) -> Unit,
     onEffectChange: (TextEffect) -> Unit,
+    onPresetChange: (ColorPreset) -> Unit,
+    onExport: (ImageBitmap) -> Unit,
     onBack: () -> Unit,
 ) {
     var controlsVisible by rememberSaveable { mutableStateOf(false) }
     var paused by rememberSaveable { mutableStateOf(false) }
+    var contentSize by remember { mutableStateOf(IntSize.Zero) }
 
     val scrolling = settings.displayMode == DisplayMode.SCROLLING
     val animateEffect = !reduceMotion && settings.effect != TextEffect.NONE
     val effectClock = rememberAnimationClock(running = animateEffect)
     val scrollClock = rememberAnimationClock(running = scrolling && !paused)
+    val tempo = AppSettings.effectTempo(settings.effectSpeed)
 
     val style = DisplayTextStyle.copy(color = Color(settings.textColor))
+    val brush: (() -> Brush?)? = if (settings.effect == TextEffect.RAINBOW) {
+        { rainbowBrush(effectClock.value, tempo, animate = !reduceMotion) }
+    } else {
+        null
+    }
+
+    val measurer = rememberTextMeasurer()
+    val density = LocalDensity.current
+    val layoutDirection = LocalLayoutDirection.current
     val toggleLabel = stringResource(if (controlsVisible) R.string.display_hide_controls else R.string.display_show_controls)
 
     Box(
@@ -84,10 +107,11 @@ fun DisplayScreen(
         val content = Modifier
             .fillMaxSize()
             .windowInsetsPadding(WindowInsets.displayCutout)
+            .onSizeChanged { contentSize = it }
             .textEffect(
                 effect = settings.effect,
                 clock = effectClock,
-                tempo = AppSettings.effectTempo(settings.effectSpeed),
+                tempo = tempo,
                 animate = !reduceMotion,
             )
 
@@ -99,20 +123,37 @@ fun DisplayScreen(
                 direction = settings.scrollDirection,
                 clock = scrollClock,
                 modifier = content,
+                brush = brush,
             )
         } else {
-            FitText(text = text, style = style, modifier = content.padding(12.dp))
+            FitText(text = text, style = style, modifier = content.padding(TextPadding), brush = brush)
         }
 
         DisplayControls(
             visible = controlsVisible,
             effect = settings.effect,
             onEffectChange = onEffectChange,
+            settings = settings,
+            onPresetChange = onPresetChange,
             orientationLock = orientationLock,
             onOrientationLockChange = onOrientationLockChange,
             showPause = scrolling,
             paused = paused,
             onPausedChange = { paused = it },
+            onExport = {
+                val image = MessageImage.render(
+                    text = text,
+                    settings = settings,
+                    widthPx = contentSize.width,
+                    heightPx = contentSize.height,
+                    paddingPx = with(density) { TextPadding.roundToPx() },
+                    density = density,
+                    layoutDirection = layoutDirection,
+                    measurer = measurer,
+                    style = style,
+                )
+                onExport(image)
+            },
             onBack = onBack,
             modifier = Modifier
                 .align(Alignment.TopStart)

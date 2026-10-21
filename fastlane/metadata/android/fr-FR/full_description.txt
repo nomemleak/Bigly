@@ -9,6 +9,11 @@
 <li>Garde l'écran allumé et peut pousser la luminosité au maximum pendant l'affichage.</li>
 <li>Orientation automatique, avec un bouton pour verrouiller en portrait ou en paysage.</li>
 <li><b>Widget d'écran d'accueil</b> : un tap affiche votre dernier message en plein écran.</li>
+<li><b>Raccourcis</b> sur l'icône : nouveau message, dernier message, historique.</li>
+<li><b>Partager vers Bigly</b> depuis n'importe quelle app : le texte pré-remplit la saisie.</li>
+<li><b>Emojis</b> en très grand dans tous les modes et effets.</li>
+<li><b>Export en image</b> (PNG) et partage.</li>
+<li><b>13 préréglages de couleurs</b>, tous bien contrastés : jaune sur noir, vert sur noir, blanc sur bleu…</li>
 <li>Couleurs Material You sur Android 12 et plus, thème clair, sombre ou système.</li>
 <li>Respecte le réglage système « supprimer les animations ».</li>
 </ul>

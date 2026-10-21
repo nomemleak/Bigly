@@ -12,18 +12,23 @@ Bigly est une petite application Android libre et open source. Tapez un message,
 - **Mode défilant** (bandeau LED) : vitesse réglable, de gauche à droite ou de droite à gauche, en boucle continue, avec un bouton pause.
 - **Effets**, un seul à la fois : clignotement, arc-en-ciel animé, tremblement, pulsation, avec une vitesse réglable.
 - **Historique** des derniers messages (20 par défaut, jusqu'à 100) : rejouez-les d'un tap, supprimez-en un ou effacez tout.
-- **Couleurs** : texte et fond depuis une palette ou n'importe quelle couleur personnalisée, préréglages noir sur blanc et blanc sur noir, et un avertissement quand le contraste est faible.
+- **Couleurs** : texte et fond depuis une palette ou n'importe quelle couleur personnalisée, et un avertissement quand le contraste est faible.
 - Garde l'écran allumé et peut pousser la luminosité au maximum pendant l'affichage.
 - Orientation automatique, avec un bouton pour verrouiller en portrait ou en paysage.
 - **Widget d'écran d'accueil** : un tap affiche le dernier message en plein écran.
+- **Raccourcis** (appui long sur l'icône) : Nouveau message, Dernier message, Historique.
+- **Partager vers Bigly** : partagez du texte depuis n'importe quelle app ; il pré-remplit le champ de saisie.
+- **Emojis** en très grand dans tous les modes et effets ; le calcul automatique de taille les mesure aussi.
+- **Export en image** : un PNG du message tel qu'affiché, partagé via le menu Partager d'Android.
+- **13 préréglages de couleurs** (jaune sur noir, vert sur noir, blanc sur bleu…), tous avec un contraste d'au moins 4,5:1, disponibles dans les réglages et sur l'écran d'affichage.
 - Couleurs Material You sur Android 12 et plus, avec un thème de repli soigné sur Android 8 à 11. Thème clair, sombre ou système.
 - Anglais et français, selon la langue du téléphone.
 
-Touchez le message pour afficher ou masquer les contrôles (retour, effet, verrou d'orientation, pause). Le geste retour du système quitte le plein écran.
+Touchez le message pour afficher ou masquer les contrôles (retour, effet, couleurs, verrou d'orientation, export, pause). Le geste retour du système quitte le plein écran.
 
 ## Vie privée
 
-Aucune permission, aucun accès réseau, aucune publicité, aucun traqueur, aucune bibliothèque propriétaire. Les réglages et l'historique restent sur l'appareil et sont exclus des sauvegardes dans le cloud.
+Aucune permission (les images exportées sont partagées depuis le cache privé de l'app via un FileProvider, sans permission de stockage), aucun accès réseau, aucune publicité, aucun traqueur, aucune bibliothèque propriétaire. Les réglages et l'historique restent sur l'appareil et sont exclus des sauvegardes dans le cloud.
 
 ## Accessibilité
 
@@ -46,7 +51,7 @@ L'APK est produit dans `app/build/outputs/apk/debug/app-debug.apk`. Installez-le
 adb install app/build/outputs/apk/debug/app-debug.apk
 ```
 
-Chaque push sur `main` est aussi compilé par GitHub Actions : ouvrez l'onglet **Actions**, choisissez la dernière exécution et téléchargez l'artefact `bigly-debug-apk`.
+Chaque push sur `main` est aussi compilé par GitHub Actions. Le dernier APK debug est joint à la [pré-release `debug-latest`](../../releases/tag/debug-latest), ainsi qu'à chaque exécution de l'onglet **Actions** (artefact `bigly-debug-apk`).
 
 | | |
 |---|---|
