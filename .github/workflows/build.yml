@@ -13,9 +13,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: 17
@@ -23,10 +23,14 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
 
       - name: Unit tests
-        run: ./gradlew --no-daemon testDebugUnitTest
+        run: |
+          set -o pipefail
+          ./gradlew --no-daemon testDebugUnitTest 2>&1 | tee -a build-log.txt
 
       - name: Debug APK
-        run: ./gradlew --no-daemon assembleDebug
+        run: |
+          set -o pipefail
+          ./gradlew --no-daemon assembleDebug 2>&1 | tee -a build-log.txt
 
       - name: Publish the debug-latest pre-release
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
@@ -42,7 +46,17 @@ jobs:
             --notes "Debug APK built automatically from commit $GITHUB_SHA. For testing only."
 
       - name: Lint
-        run: ./gradlew --no-daemon lintDebug
+        run: |
+          set -o pipefail
+          ./gradlew --no-daemon lintDebug 2>&1 | tee -a build-log.txt
+
+      # Turn compiler errors and failing tests into annotations, visible on the run page.
+      - name: Report failures
+        if: failure()
+        run: |
+          grep -E '^e: |^> |FAILED|AssertionError|Exception' build-log.txt | head -60 | while IFS= read -r line; do
+            echo "::error::${line}"
+          done || true
 
       - uses: actions/upload-artifact@v4
         if: always()
