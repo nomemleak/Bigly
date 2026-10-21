@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Bigly - show text in huge letters on your screen.
+  Copyright (C) 2026 Bigly contributors
+  SPDX-License-Identifier: GPL-3.0-or-later
+-->
+<!-- The "B" of the launcher icon, alone, for small sizes. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <group
+        android:scaleX="0.3333"
+        android:scaleY="0.3333"
+        android:translateX="-5.5"
+        android:translateY="-6">
+        <path
+            android:fillColor="#FFFFFFFF"
+            android:fillType="evenOdd"
+            android:pathData="M36,30 H56 A11,11 0 0 1 56,52 A13,13 0 0 1 56,78 H36 Z M47,38 V44 H56 A3,3 0 0 0 56,38 Z M47,60 V70 H56 A5,5 0 0 0 56,60 Z" />
+    </group>
+</vector>

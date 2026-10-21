@@ -33,6 +33,11 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.imePadding
@@ -151,7 +156,8 @@ fun HomeScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(R.string.app_name)) },
+                navigationIcon = { AppLogo(Modifier.padding(start = 12.dp, end = 4.dp)) },
+                title = { Text(stringResource(R.string.app_name), fontWeight = FontWeight.Black) },
                 actions = {
                     IconButton(onClick = actions::openHistory) {
                         Icon(painterResource(R.drawable.ic_history), contentDescription = stringResource(R.string.history_screen_title))
@@ -163,56 +169,138 @@ fun HomeScreen(
             )
         },
     ) { padding ->
-        Column(
+        BoxWithConstraints(
             Modifier
                 .fillMaxSize()
                 .padding(top = padding.calculateTopPadding())
                 .consumeWindowInsets(PaddingValues(top = padding.calculateTopPadding()))
                 .imePadding()
                 .navigationBarsPadding()
-                .padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
+                .padding(start = 16.dp, end = 16.dp, bottom = 12.dp),
         ) {
-            PreviewInput(
-                text = text,
-                onTextChange = onTextChange,
-                settings = settings,
-                focusRequester = focusRequester,
-                modifier = Modifier
-                    .weight(1f)
-                    .heightIn(min = 120.dp)
-                    .fillMaxWidth(),
-            )
+            val landscape = maxWidth > maxHeight
+            val preview = @Composable { modifier: Modifier ->
+                PreviewInput(
+                    text = text,
+                    onTextChange = onTextChange,
+                    settings = settings,
+                    focusRequester = focusRequester,
+                    modifier = modifier,
+                )
+            }
+            val options = @Composable { modifier: Modifier ->
+                Options(
+                    settings = settings,
+                    history = if (typing) emptyList() else history,
+                    showScrollRow = !typing,
+                    actions = actions,
+                    onPickRecent = { entry ->
+                        onTextChange(entry.text)
+                        entry.style?.let(actions::applyStyle)
+                    },
+                    modifier = modifier,
+                )
+            }
+            val showButton = @Composable { ShowButton(enabled = text.isNotBlank(), onClick = submit) }
 
-            if (!typing && history.isNotEmpty()) {
-                RecentRow(history) { entry ->
-                    onTextChange(entry.text)
-                    entry.style?.let(actions::applyStyle)
+            if (landscape) {
+                // Side by side: the preview keeps the full height, options scroll next to it,
+                // and "Show" always stays visible at the bottom right.
+                Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                    preview(Modifier.weight(1f).fillMaxHeight())
+                    Column(
+                        Modifier.weight(1f).fillMaxHeight(),
+                        verticalArrangement = Arrangement.spacedBy(12.dp),
+                    ) {
+                        options(Modifier.weight(1f))
+                        showButton()
+                    }
+                }
+            } else {
+                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    preview(Modifier.weight(1f).heightIn(min = 140.dp).fillMaxWidth())
+                    // Options take what they need, up to about half the screen, then scroll.
+                    options(Modifier.weight(1f, fill = false).heightIn(max = maxHeight * 0.55f))
+                    showButton()
                 }
             }
-
-            ThemeRow(settings = settings, onSelect = actions::applyPreset, onMore = actions::openSettings)
-
-            ModeRow(settings.displayMode, actions::setDisplayMode)
-            EffectRow(settings.effect, actions::setEffect)
-            if (!typing && settings.displayMode == DisplayMode.SCROLLING) {
-                ScrollRow(settings, actions)
-            }
-
-            Button(
-                onClick = submit,
-                enabled = text.isNotBlank(),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .heightIn(min = 56.dp),
-            ) {
-                Icon(Icons.Filled.PlayArrow, contentDescription = null)
-                Spacer(Modifier.width(8.dp))
-                Text(stringResource(R.string.action_show), style = MaterialTheme.typography.titleMedium)
-            }
-            Spacer(Modifier.size(4.dp))
         }
     }
+}
+
+@Composable
+private fun ShowButton(enabled: Boolean, onClick: () -> Unit) {
+    Button(
+        onClick = onClick,
+        enabled = enabled,
+        modifier = Modifier
+            .fillMaxWidth()
+            .heightIn(min = 56.dp),
+    ) {
+        Icon(Icons.Filled.PlayArrow, contentDescription = null)
+        Spacer(Modifier.width(8.dp))
+        Text(stringResource(R.string.action_show), style = MaterialTheme.typography.titleMedium)
+    }
+}
+
+/** App mark for the top bar: the big "B" of the launcher icon, in the theme colors. */
+@Composable
+private fun AppLogo(modifier: Modifier = Modifier) {
+    Box(
+        modifier
+            .size(36.dp)
+            .background(MaterialTheme.colorScheme.primary, RoundedCornerShape(10.dp)),
+        contentAlignment = Alignment.Center,
+    ) {
+        Icon(
+            painterResource(R.drawable.ic_logo_b),
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.onPrimary,
+            modifier = Modifier.size(24.dp),
+        )
+    }
+}
+
+/** Recent messages, color themes, mode and effect, each under a small heading. */
+@Composable
+private fun Options(
+    settings: AppSettings,
+    history: List<HistoryEntry>,
+    showScrollRow: Boolean,
+    actions: HomeActions,
+    onPickRecent: (HistoryEntry) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier.verticalScroll(rememberScrollState()),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        if (history.isNotEmpty()) {
+            SectionLabel(stringResource(R.string.history_title))
+            RecentRow(history, onPickRecent)
+        }
+        SectionLabel(stringResource(R.string.section_colors))
+        ThemeRow(settings = settings, onSelect = actions::applyPreset, onMore = actions::openSettings)
+        SectionLabel(stringResource(R.string.mode_label))
+        ModeRow(settings.displayMode, actions::setDisplayMode)
+        if (showScrollRow && settings.displayMode == DisplayMode.SCROLLING) {
+            ScrollRow(settings, actions)
+        }
+        SectionLabel(stringResource(R.string.settings_effect))
+        EffectRow(settings.effect, actions::setEffect)
+    }
+}
+
+@Composable
+private fun SectionLabel(text: String) {
+    Text(
+        text = text,
+        style = MaterialTheme.typography.labelLarge,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        modifier = Modifier
+            .padding(top = 4.dp)
+            .semantics { heading() },
+    )
 }
 
 /**
@@ -359,6 +447,10 @@ private fun ModeRow(mode: DisplayMode, onChange: (DisplayMode) -> Unit) {
                 selected = mode == value,
                 onClick = { onChange(value) },
                 shape = SegmentedButtonDefaults.itemShape(index, modes.size),
+                icon = {
+                    val icon = if (value == DisplayMode.FIXED) R.drawable.ic_mode_fixed else R.drawable.ic_mode_scrolling
+                    Icon(painterResource(icon), contentDescription = null, modifier = Modifier.size(18.dp))
+                },
             ) { Text(label) }
         }
     }
@@ -372,6 +464,9 @@ private fun EffectRow(effect: TextEffect, onChange: (TextEffect) -> Unit) {
                 selected = option == effect,
                 onClick = { onChange(option) },
                 label = { Text(stringResource(option.labelRes())) },
+                leadingIcon = {
+                    Icon(painterResource(option.iconRes()), contentDescription = null, modifier = Modifier.size(18.dp))
+                },
             )
         }
     }
@@ -409,4 +504,12 @@ private fun ScrollRow(settings: AppSettings, actions: HomeActions) {
                 },
         )
     }
+}
+
+fun TextEffect.iconRes(): Int = when (this) {
+    TextEffect.NONE -> R.drawable.ic_effect_none
+    TextEffect.BLINK -> R.drawable.ic_effect_blink
+    TextEffect.RAINBOW -> R.drawable.ic_effect_rainbow
+    TextEffect.SHAKE -> R.drawable.ic_effect_shake
+    TextEffect.PULSE -> R.drawable.ic_effect_pulse
 }
