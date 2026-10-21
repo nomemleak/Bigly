@@ -133,4 +133,5 @@
     <string name="shortcut_history_long">Ouvrir l’historique</string>
     <string name="action_clear_text">Effacer le texte</string>
     <string name="colors_more">Plus de couleurs</string>
+    <string name="section_colors">Couleurs</string>
 </resources>
