@@ -179,6 +179,7 @@ fun HomeScreen(
                 .padding(start = 16.dp, end = 16.dp, bottom = 12.dp),
         ) {
             val landscape = maxWidth > maxHeight
+            val availableHeight = maxHeight
             val preview = @Composable { modifier: Modifier ->
                 PreviewInput(
                     text = text,
@@ -220,7 +221,7 @@ fun HomeScreen(
                 Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                     preview(Modifier.weight(1f).heightIn(min = 140.dp).fillMaxWidth())
                     // Options take what they need, up to about half the screen, then scroll.
-                    options(Modifier.weight(1f, fill = false).heightIn(max = maxHeight * 0.55f))
+                    options(Modifier.weight(1f, fill = false).heightIn(max = availableHeight * 0.55f))
                     showButton()
                 }
             }
