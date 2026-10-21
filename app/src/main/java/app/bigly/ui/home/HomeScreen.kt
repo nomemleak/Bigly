@@ -255,7 +255,7 @@ private fun PreviewInput(
                     if (text.isEmpty()) {
                         Text(
                             text = stringResource(R.string.home_input_placeholder),
-                            style = style.copy(color = textColor.copy(alpha = 0.45f), brush = null),
+                            style = style.copy(color = textColor.copy(alpha = 0.45f)),
                         )
                     }
                     inner()
