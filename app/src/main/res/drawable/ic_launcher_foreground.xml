@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Bigly - show text in huge letters on your screen.
+  Copyright (C) 2026 Bigly contributors
+  SPDX-License-Identifier: GPL-3.0-or-later
+-->
+<!-- A huge "B". The 108 x 108 canvas keeps the letter inside the 66 dp safe zone. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <group
+        android:pivotX="54"
+        android:pivotY="54"
+        android:scaleX="1.1"
+        android:scaleY="1.1"
+        android:translateX="1.5">
+        <path
+            android:fillColor="#FFFFFFFF"
+            android:fillType="evenOdd"
+            android:pathData="M36,30 H56 A11,11 0 0 1 56,52 A13,13 0 0 1 56,78 H36 Z M47,38 V44 H56 A3,3 0 0 0 56,38 Z M47,60 V70 H56 A5,5 0 0 0 56,60 Z" />
+    </group>
+</vector>

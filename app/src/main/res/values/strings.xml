@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Bigly - show text in huge letters on your screen.
+  Copyright (C) 2026 Bigly contributors
+  SPDX-License-Identifier: GPL-3.0-or-later
+-->
+<resources>
+    <string name="app_name" translatable="false">Bigly</string>
+
+    <!-- Home -->
+    <string name="home_input_label">Your message</string>
+    <string name="home_input_placeholder">Type something…</string>
+    <string name="action_show">Show</string>
+    <string name="mode_label">Display mode</string>
+    <string name="mode_fixed">Fixed</string>
+    <string name="mode_scrolling">Scrolling</string>
+    <string name="history_title">Recent</string>
+    <string name="history_empty">Your messages will appear here.</string>
+    <string name="history_clear">Clear all</string>
+    <string name="history_clear_title">Clear history?</string>
+    <string name="history_clear_message">All recent messages will be deleted from this device.</string>
+    <string name="history_delete_item">Delete “%1$s”</string>
+    <string name="history_show_again">show again</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="action_clear">Clear</string>
+    <string name="action_apply">Apply</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_back">Back</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_section_appearance">Appearance</string>
+    <string name="settings_theme">Theme</string>
+    <string name="theme_system">System</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="settings_dynamic_color">Material You colors</string>
+    <string name="settings_dynamic_color_summary">Use the colors of your wallpaper</string>
+    <string name="settings_section_display">Display</string>
+    <string name="settings_preview_sample">Bigly</string>
+    <string name="settings_preview_description">Preview: “%1$s” in the chosen colors</string>
+    <string name="settings_text_color">Text color</string>
+    <string name="settings_background_color">Background color</string>
+    <string name="settings_presets">Quick presets</string>
+    <string name="preset_black_on_white">Black on white</string>
+    <string name="preset_white_on_black">White on black</string>
+    <string name="contrast_low">Low contrast (%1$s:1): the text may be hard to read.</string>
+    <string name="settings_keep_screen_on">Keep screen on</string>
+    <string name="settings_keep_screen_on_summary">While a message is shown</string>
+    <string name="settings_max_brightness">Maximum brightness</string>
+    <string name="settings_max_brightness_summary">While a message is shown</string>
+    <string name="settings_section_scrolling">Scrolling</string>
+    <string name="settings_scroll_speed">Speed</string>
+    <string name="settings_scroll_direction">Direction</string>
+    <string name="direction_rtl">Right to left</string>
+    <string name="direction_ltr">Left to right</string>
+    <string name="settings_section_effects">Effects</string>
+    <string name="settings_effect">Effect</string>
+    <string name="settings_effect_speed">Effect speed</string>
+    <string name="effect_none">None</string>
+    <string name="effect_blink">Blink</string>
+    <string name="effect_rainbow">Rainbow</string>
+    <string name="effect_shake">Shake</string>
+    <string name="effect_pulse">Pulse</string>
+    <string name="reduced_motion_note">Animations are turned off in your system settings, so effects stay still.</string>
+    <string name="settings_section_history">History</string>
+    <string name="settings_history_size">Messages kept</string>
+    <string name="settings_section_about">About</string>
+    <string name="about_text">Bigly %1$s. Free software under the GNU GPL v3. No ads, no tracking, no network access.</string>
+    <string name="speed_value">%1$d of %2$d</string>
+
+    <!-- Color picker -->
+    <string name="color_custom">Custom color</string>
+    <string name="color_palette">Palette</string>
+    <string name="color_hue">Hue</string>
+    <string name="color_saturation">Saturation</string>
+    <string name="color_brightness">Brightness</string>
+    <string name="color_hex">Hex code</string>
+    <string name="color_hex_invalid">Use the #RRGGBB format</string>
+    <string name="color_current">Current color: %1$s</string>
+    <string name="color_white">White</string>
+    <string name="color_black">Black</string>
+    <string name="color_yellow">Yellow</string>
+    <string name="color_amber">Amber</string>
+    <string name="color_orange">Orange</string>
+    <string name="color_red">Red</string>
+    <string name="color_pink">Pink</string>
+    <string name="color_purple">Purple</string>
+    <string name="color_blue">Blue</string>
+    <string name="color_cyan">Cyan</string>
+    <string name="color_green">Green</string>
+    <string name="color_lime">Lime</string>
+
+    <!-- Display -->
+    <string name="display_show_controls">show controls</string>
+    <string name="display_hide_controls">hide controls</string>
+    <string name="control_effect">Effect: %1$s</string>
+    <string name="control_orientation_auto">Orientation: automatic. Tap to lock in portrait.</string>
+    <string name="control_orientation_portrait">Orientation locked in portrait. Tap to lock in landscape.</string>
+    <string name="control_orientation_landscape">Orientation locked in landscape. Tap for automatic.</string>
+    <string name="control_pause">Pause scrolling</string>
+    <string name="control_resume">Resume scrolling</string>
+
+    <!-- Widget -->
+    <string name="widget_description">Shows your last message full screen</string>
+    <string name="widget_placeholder" translatable="false">B</string>
+    <string name="widget_open_last">Show the last message: %1$s</string>
+    <string name="widget_open_app">Open Bigly</string>
+</resources>

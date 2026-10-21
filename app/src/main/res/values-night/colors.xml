@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Bigly - show text in huge letters on your screen.
+  Copyright (C) 2026 Bigly contributors
+  SPDX-License-Identifier: GPL-3.0-or-later
+-->
+<resources>
+    <color name="window_background">#FF121316</color>
+</resources>
