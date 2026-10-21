@@ -54,9 +54,13 @@ jobs:
       - name: Report failures
         if: failure()
         run: |
-          grep -E '^e: |^> |FAILED|AssertionError|Exception' build-log.txt | head -60 | while IFS= read -r line; do
-            echo "::error::${line}"
-          done || true
+          {
+            grep -E '^e: |^w: .*error' build-log.txt || true
+            grep -A12 'What went wrong' build-log.txt || true
+            grep -B2 -A6 -E 'FAILED$' build-log.txt | grep -vE '^> Task' || true
+          } | head -80 > failures.txt
+          # One annotation holds everything (annotations are capped at 10 per step).
+          echo "::error title=Build failure::$(sed ':a;N;$!ba;s/%/%25/g;s/\r/%0D/g;s/\n/%0A/g' failures.txt)"
 
       - uses: actions/upload-artifact@v4
         if: always()
