@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   build:
@@ -27,6 +27,19 @@ jobs:
 
       - name: Debug APK
         run: ./gradlew --no-daemon assembleDebug
+
+      - name: Publish the debug-latest pre-release
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cp app/build/outputs/apk/debug/app-debug.apk bigly-debug.apk
+          gh release delete debug-latest --yes --cleanup-tag || true
+          gh release create debug-latest bigly-debug.apk \
+            --prerelease \
+            --target "$GITHUB_SHA" \
+            --title "Debug build (latest)" \
+            --notes "Debug APK built automatically from commit $GITHUB_SHA. For testing only."
 
       - name: Lint
         run: ./gradlew --no-daemon lintDebug

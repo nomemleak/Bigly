@@ -30,10 +30,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.AbsoluteAlignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.rememberTextMeasurer
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
 import app.bigly.data.AppSettings
 import app.bigly.data.ScrollDirection
@@ -52,6 +52,7 @@ fun MarqueeText(
     direction: ScrollDirection,
     clock: State<Float>,
     modifier: Modifier = Modifier,
+    brush: (() -> Brush?)? = null,
 ) {
     BoxWithConstraints(modifier.clipToBounds(), contentAlignment = AbsoluteAlignment.CenterLeft) {
         val measurer = rememberTextMeasurer()
@@ -61,33 +62,20 @@ fun MarqueeText(
         val maxHeight = constraints.maxHeight
 
         val lineStyle = remember(line, style, maxHeight, density) {
-            val base = style.copy(textAlign = TextAlign.Start)
-            val px = FontSizeFitter.largestFitting(
-                min = 8f,
-                max = maxHeight.toFloat().coerceAtLeast(8f),
-                precision = 1f,
-            ) { sizePx ->
-                val layout = measurer.measure(
-                    text = line,
-                    style = base.copy(fontSize = with(density) { sizePx.toSp() }),
-                    softWrap = false,
-                    maxLines = 1,
-                    skipCache = true,
-                )
-                layout.size.height <= maxHeight
-            }
-            base.copy(fontSize = with(density) { px.toSp() })
+            val base = style.forSingleLine()
+            base.copy(fontSize = fitSingleLineFontSize(measurer, line, base, maxHeight, density))
         }
-        val textWidth = remember(line, lineStyle) {
-            measurer.measure(line, lineStyle, softWrap = false, maxLines = 1).size.width.toFloat()
+        val textWidth = remember(line, lineStyle, density) {
+            measurer.measure(line, lineStyle, softWrap = false, maxLines = 1, density = density).size.width.toFloat()
         }
 
         val pixelsPerSecond = screenWidth * AppSettings.screensPerSecond(speed)
         val cycle = screenWidth + textWidth
+        val currentBrush = brush?.invoke()
 
         Text(
             text = line,
-            style = lineStyle,
+            style = if (currentBrush != null) lineStyle.copy(brush = currentBrush) else lineStyle,
             softWrap = false,
             maxLines = 1,
             modifier = Modifier

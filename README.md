@@ -12,18 +12,23 @@ Bigly is a small, free and open source Android app. Type a message, tap **Show**
 - **Scrolling mode** (LED banner): adjustable speed, left to right or right to left, continuous loop, pause button.
 - **Effects**, one at a time: blink, animated rainbow, shake, pulse, with an adjustable speed.
 - **History** of the last messages (20 by default, up to 100): replay with one tap, delete one, or clear everything.
-- **Colors**: text and background from a palette or any custom color, presets for black on white and white on black, and a warning when contrast is low.
+- **Colors**: text and background from a palette or any custom color, and a warning when contrast is low.
 - Keeps the screen on and can raise the brightness to the maximum while a message is shown.
 - Automatic orientation, with a button to lock portrait or landscape.
 - **Home screen widget**: one tap shows the last message full screen.
+- **Launcher shortcuts** (long press on the icon): New message, Last message, History.
+- **Share to Bigly**: share text from any app; it fills the input field, ready to show.
+- **Emojis** at full size in every mode and effect; the automatic sizing measures them too.
+- **Export as image**: a PNG of the message as displayed, shared through the Android share menu.
+- **13 color presets** (yellow on black, green on black, white on blue…), all with a contrast of at least 4.5:1, available in the settings and on the display screen.
 - Material You colors on Android 12+, with a clean fallback theme on Android 8 to 11. Light, dark or system theme.
 - English and French, following the phone language.
 
-Tap the message to show or hide the controls (back, effect, orientation lock, pause). The system back gesture leaves full screen.
+Tap the message to show or hide the controls (back, effect, colors, orientation lock, export, pause). The system back gesture leaves full screen.
 
 ## Privacy
 
-No permissions, no network access, no ads, no trackers, no proprietary libraries. Settings and history are stored on the device only, and are excluded from cloud backups.
+No permissions (exported images are shared from the app's private cache through a FileProvider, so no storage permission is needed), no network access, no ads, no trackers, no proprietary libraries. Settings and history are stored on the device only, and are excluded from cloud backups.
 
 ## Accessibility
 
@@ -46,7 +51,7 @@ The APK is written to `app/build/outputs/apk/debug/app-debug.apk`. Install it wi
 adb install app/build/outputs/apk/debug/app-debug.apk
 ```
 
-Every push to `main` is also built by GitHub Actions: open the **Actions** tab, pick the latest run, and download the `bigly-debug-apk` artifact.
+Every push to `main` is also built by GitHub Actions. The latest debug APK is attached to the [`debug-latest` pre-release](../../releases/tag/debug-latest), and to each run in the **Actions** tab as the `bigly-debug-apk` artifact.
 
 | | |
 |---|---|

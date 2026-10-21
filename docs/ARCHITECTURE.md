@@ -13,7 +13,11 @@ Application Android native, mono-module, sans dépendance hors AndroidX/Kotlin (
 | Historique | fichier texte privé (`files/history.txt`), écriture atomique, `StateFlow` | logique 100 % Kotlin, testable sans Android |
 | Taille de police | recherche dichotomique sur la taille, mesure via `TextMeasurer` | le texte multiligne remplit l'écran sans couper un mot |
 | Effets | une boucle d'images (`withFrameNanos`) lue dans `graphicsLayer` / `drawWithContent` | pas de recomposition à chaque image |
-| Arc-en-ciel | dégradé appliqué au texte avec `BlendMode.SrcIn` | fonctionne en mode fixe et défilant |
+| Arc-en-ciel | dégradé posé comme `brush` du texte | les emojis gardent leurs couleurs |
+| Emojis | coupures de ligne permises entre emojis et idéogrammes (`Emoji`, `FontSizeFitter`) | taille maximale sans couper un mot |
+| Raccourcis | `ShortcutManagerCompat`, publiés au lancement | fonctionnent aussi pour le build `.debug`, libellés traduits |
+| Partage entrant | filtre `ACTION_SEND text/plain` sur `MainActivity`, nettoyage dans `SharedText` | pré-remplit la saisie |
+| Export | `MessageImage` dessine le message dans un bitmap, `FileProvider` sur le cache | aucune permission de stockage |
 | Widget | `AppWidgetProvider` classique (RemoteViews) | aucune dépendance supplémentaire |
 | Réduire les animations | `ValueAnimator.areAnimatorsEnabled()` | si désactivé : effets figés |
 | Rotation | `configChanges` sur `DisplayActivity` + `rememberSaveable` | pas de recréation, l'état survit |
@@ -40,7 +44,8 @@ bigly/
         │   ├── AndroidManifest.xml
         │   ├── java/app/bigly/
         │   │   ├── BiglyApp.kt                 Application + conteneur de dépendances
-        │   │   ├── MainActivity.kt             accueil ⇄ réglages
+        │   │   ├── MainActivity.kt             accueil ⇄ historique ⇄ réglages, partage entrant
+        │   │   ├── Shortcuts.kt                raccourcis d'appui long
         │   │   ├── DisplayActivity.kt          plein écran, fenêtre, orientation
         │   │   ├── data/
         │   │   │   ├── AppSettings.kt          modèle + énumérations (mode, effet, sens, thème)
@@ -49,13 +54,14 @@ bigly/
         │   │   │   ├── HistoryCodec.kt         (dé)sérialisation texte
         │   │   │   ├── HistoryList.kt          règles : dédoublonnage, ordre, limite
         │   │   │   └── HistoryRepository.kt    fichier + Flow
-        │   │   ├── text/FontSizeFitter.kt      calcul de taille (pur Kotlin)
-        │   │   ├── util/ColorUtils.kt          contraste WCAG, hex (pur Kotlin)
+        │   │   ├── text/                       FontSizeFitter, Emoji, SharedText (pur Kotlin)
+        │   │   ├── data/ColorPresets.kt        13 préréglages de couleurs
+        │   │   ├── util/                       ColorUtils (contraste), ImageExport, Motion
         │   │   ├── ui/theme/                   Theme.kt, Color.kt, Type.kt
-        │   │   ├── ui/home/HomeScreen.kt       saisie, mode, historique
+        │   │   ├── ui/home/                    HomeScreen (saisie, récents), HistoryScreen
         │   │   ├── ui/settings/                SettingsScreen.kt, ColorPickerDialog.kt
-        │   │   ├── ui/display/                 DisplayScreen.kt, FitText.kt, MarqueeText.kt,
-        │   │   │                               TextEffects.kt, DisplayControls.kt
+        │   │   ├── ui/display/                 DisplayScreen, FitText, MarqueeText, TextFitting,
+        │   │   │                               TextEffects, DisplayControls, MessageImage (export)
         │   │   └── widget/BiglyWidgetProvider.kt
         │   └── res/
         │       ├── values/ et values-fr/strings.xml
@@ -65,7 +71,8 @@ bigly/
         │       ├── layout/widget_bigly.xml
         │       └── xml/widget_info.xml, locales_config.xml
         └── test/java/app/bigly/
-            ├── FontSizeFitterTest.kt
+            ├── FontSizeFitterTest.kt, EmojiFontSizeTest.kt, SharedTextTest.kt
+            ├── ColorPresetTest.kt
             ├── HistoryCodecTest.kt
             ├── HistoryListTest.kt
             ├── HistoryRepositoryTest.kt

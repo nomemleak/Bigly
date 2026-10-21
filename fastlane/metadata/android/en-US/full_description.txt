@@ -9,6 +9,11 @@
 <li>Keeps the screen on and can raise brightness to the maximum while a message is shown.</li>
 <li>Automatic orientation, with a button to lock portrait or landscape.</li>
 <li><b>Home screen widget</b>: one tap shows your last message full screen.</li>
+<li><b>Shortcuts</b> on the app icon: new message, last message, history.</li>
+<li><b>Share to Bigly</b> from any app: the text fills the input field.</li>
+<li><b>Emojis</b> shown huge in every mode and effect.</li>
+<li><b>Export as image</b> (PNG) and share it.</li>
+<li><b>13 color presets</b>, all with strong contrast: yellow on black, green on black, white on blue…</li>
 <li>Material You colors on Android 12+, light, dark or system theme.</li>
 <li>Respects the system "remove animations" setting.</li>
 </ul>

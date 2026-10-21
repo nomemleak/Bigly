@@ -31,6 +31,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -48,7 +49,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import app.bigly.R
+import app.bigly.data.AppSettings
+import app.bigly.data.ColorPreset
 import app.bigly.data.TextEffect
+import app.bigly.ui.settings.PresetSwatch
 import app.bigly.ui.settings.labelRes
 
 enum class OrientationLock { AUTO, PORTRAIT, LANDSCAPE }
@@ -59,17 +63,23 @@ fun OrientationLock.next(): OrientationLock = when (this) {
     OrientationLock.LANDSCAPE -> OrientationLock.AUTO
 }
 
-/** Small bar shown on top of the text: back, effect, orientation lock and, when scrolling, pause. */
+/**
+ * Small bar shown on top of the text: back, effect, colors, orientation lock,
+ * export and, when scrolling, pause.
+ */
 @Composable
 fun DisplayControls(
     visible: Boolean,
     effect: TextEffect,
     onEffectChange: (TextEffect) -> Unit,
+    settings: AppSettings,
+    onPresetChange: (ColorPreset) -> Unit,
     orientationLock: OrientationLock,
     onOrientationLockChange: (OrientationLock) -> Unit,
     showPause: Boolean,
     paused: Boolean,
     onPausedChange: (Boolean) -> Unit,
+    onExport: () -> Unit,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -111,6 +121,30 @@ fun DisplayControls(
                     }
                 }
 
+                var colorsOpen by rememberSaveable { mutableStateOf(false) }
+                Box {
+                    val current = ColorPreset.entries.firstOrNull { it.matches(settings) }
+                    val currentName = stringResource(current?.labelRes() ?: R.string.colors_custom)
+                    IconButton(onClick = { colorsOpen = true }) {
+                        Icon(
+                            painterResource(R.drawable.ic_palette),
+                            contentDescription = stringResource(R.string.control_colors, currentName),
+                        )
+                    }
+                    DropdownMenu(expanded = colorsOpen, onDismissRequest = { colorsOpen = false }) {
+                        ColorPreset.entries.forEach { preset ->
+                            DropdownMenuItem(
+                                text = { Text(stringResource(preset.labelRes())) },
+                                leadingIcon = { PresetSwatch(preset, selected = preset == current) },
+                                onClick = {
+                                    colorsOpen = false
+                                    onPresetChange(preset)
+                                },
+                            )
+                        }
+                    }
+                }
+
                 IconButton(onClick = { onOrientationLockChange(orientationLock.next()) }) {
                     val (icon, description) = when (orientationLock) {
                         OrientationLock.AUTO -> R.drawable.ic_orientation_auto to R.string.control_orientation_auto
@@ -118,6 +152,10 @@ fun DisplayControls(
                         OrientationLock.LANDSCAPE -> R.drawable.ic_orientation_landscape to R.string.control_orientation_landscape
                     }
                     Icon(painterResource(icon), contentDescription = stringResource(description))
+                }
+
+                IconButton(onClick = onExport) {
+                    Icon(Icons.Filled.Share, contentDescription = stringResource(R.string.control_export))
                 }
 
                 if (showPause) {

@@ -20,12 +20,14 @@
 
 package app.bigly
 
+import android.content.ClipData
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Build
 import android.os.Bundle
 import android.view.WindowManager
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -35,15 +37,19 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.lifecycleScope
 import app.bigly.data.AppSettings
 import app.bigly.ui.display.DisplayScreen
 import app.bigly.ui.display.OrientationLock
 import app.bigly.ui.theme.BiglyTheme
+import app.bigly.util.ImageExport
 import app.bigly.util.isReduceMotionEnabled
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 
 /**
@@ -92,6 +98,10 @@ class DisplayActivity : ComponentActivity() {
                     orientationLock = orientationLock,
                     onOrientationLockChange = { orientationLock = it },
                     onEffectChange = { effect -> app.appScope.launch { app.settingsRepository.setEffect(effect) } },
+                    onPresetChange = { preset ->
+                        app.appScope.launch { app.settingsRepository.setColors(preset.textColor, preset.backgroundColor) }
+                    },
+                    onExport = ::share,
                     onBack = { finish() },
                 )
             }
@@ -140,6 +150,23 @@ class DisplayActivity : ComponentActivity() {
         }
     }
 
+    private fun share(image: ImageBitmap) {
+        lifecycleScope.launch {
+            try {
+                val uri = ImageExport.save(this@DisplayActivity, image)
+                val send = Intent(Intent.ACTION_SEND)
+                    .setType("image/png")
+                    .putExtra(Intent.EXTRA_STREAM, uri)
+                    .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                send.clipData = ClipData.newRawUri(null, uri)
+                startActivity(Intent.createChooser(send, getString(R.string.export_chooser_title)))
+            } catch (e: Exception) {
+                if (e is CancellationException) throw e
+                Toast.makeText(this@DisplayActivity, R.string.export_failed, Toast.LENGTH_LONG).show()
+            }
+        }
+    }
+
     private fun openHomeInstead() {
         startActivity(Intent(this, MainActivity::class.java))
         finish()
@@ -158,6 +185,6 @@ class DisplayActivity : ComponentActivity() {
                 .setAction(ACTION_SHOW_LAST)
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
 
-        const val ACTION_SHOW_LAST = "app.bigly.action.SHOW_LAST"
+        private const val ACTION_SHOW_LAST = "app.bigly.action.SHOW_LAST"
     }
 }

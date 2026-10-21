@@ -36,7 +36,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -50,7 +52,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
@@ -71,14 +72,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import app.bigly.R
 import app.bigly.data.AppSettings
+import app.bigly.data.ColorPreset
 import app.bigly.data.ScrollDirection
 import app.bigly.data.TextEffect
 import app.bigly.data.ThemeMode
@@ -167,21 +171,7 @@ fun SettingsScreen(
                 style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
             )
-            Row(
-                Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-            ) {
-                OutlinedButton(
-                    onClick = { actions.setColors(AppSettings.BLACK, AppSettings.WHITE) },
-                    modifier = Modifier.weight(1f),
-                ) { Text(stringResource(R.string.preset_black_on_white)) }
-                OutlinedButton(
-                    onClick = { actions.setColors(AppSettings.WHITE, AppSettings.BLACK) },
-                    modifier = Modifier.weight(1f),
-                ) { Text(stringResource(R.string.preset_white_on_black)) }
-            }
+            PresetGrid(settings, onSelect = { actions.setColors(it.textColor, it.backgroundColor) })
             Spacer(Modifier.height(8.dp))
             SwitchRow(
                 title = stringResource(R.string.settings_keep_screen_on),
@@ -387,4 +377,69 @@ fun TextEffect.labelRes(): Int = when (this) {
     TextEffect.RAINBOW -> R.string.effect_rainbow
     TextEffect.SHAKE -> R.string.effect_shake
     TextEffect.PULSE -> R.string.effect_pulse
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun PresetGrid(settings: AppSettings, onSelect: (ColorPreset) -> Unit) {
+    FlowRow(
+        Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        ColorPreset.entries.forEach { preset ->
+            val selected = preset.matches(settings)
+            Column(
+                Modifier
+                    .width(76.dp)
+                    .selectable(selected = selected, role = Role.RadioButton, onClick = { onSelect(preset) }),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                PresetSwatch(preset, selected, Modifier.size(width = 64.dp, height = 44.dp))
+                Text(
+                    text = stringResource(preset.labelRes()),
+                    style = MaterialTheme.typography.labelSmall,
+                    textAlign = TextAlign.Center,
+                    maxLines = 2,
+                    modifier = Modifier.padding(top = 4.dp),
+                )
+            }
+        }
+    }
+}
+
+/** Small tile with "Aa" in the preset colors. Decorative: the caller gives the accessible name. */
+@Composable
+fun PresetSwatch(preset: ColorPreset, selected: Boolean, modifier: Modifier = Modifier.size(32.dp)) {
+    Box(
+        modifier
+            .clearAndSetSemantics { }
+            .background(Color(preset.backgroundColor), RoundedCornerShape(8.dp))
+            .border(
+                width = if (selected) 3.dp else 1.dp,
+                color = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline,
+                shape = RoundedCornerShape(8.dp),
+            ),
+        contentAlignment = Alignment.Center,
+    ) {
+        Text("Aa", style = DisplayTextStyle.copy(color = Color(preset.textColor), fontSize = 14.sp))
+    }
+}
+
+fun ColorPreset.labelRes(): Int = when (this) {
+    ColorPreset.BLACK_ON_WHITE -> R.string.preset_black_on_white
+    ColorPreset.WHITE_ON_BLACK -> R.string.preset_white_on_black
+    ColorPreset.YELLOW_ON_BLACK -> R.string.preset_yellow_on_black
+    ColorPreset.GREEN_ON_BLACK -> R.string.preset_green_on_black
+    ColorPreset.ORANGE_ON_BLACK -> R.string.preset_orange_on_black
+    ColorPreset.CYAN_ON_BLACK -> R.string.preset_cyan_on_black
+    ColorPreset.PINK_ON_BLACK -> R.string.preset_pink_on_black
+    ColorPreset.RED_ON_WHITE -> R.string.preset_red_on_white
+    ColorPreset.BLUE_ON_WHITE -> R.string.preset_blue_on_white
+    ColorPreset.BLACK_ON_YELLOW -> R.string.preset_black_on_yellow
+    ColorPreset.WHITE_ON_RED -> R.string.preset_white_on_red
+    ColorPreset.WHITE_ON_BLUE -> R.string.preset_white_on_blue
+    ColorPreset.WHITE_ON_GREEN -> R.string.preset_white_on_green
 }

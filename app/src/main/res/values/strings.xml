@@ -106,4 +106,32 @@
     <string name="widget_placeholder" translatable="false">B</string>
     <string name="widget_open_last">Show the last message: %1$s</string>
     <string name="widget_open_app">Open Bigly</string>
+    <!-- Color presets -->
+    <string name="preset_yellow_on_black">Yellow on black</string>
+    <string name="preset_green_on_black">Green on black</string>
+    <string name="preset_orange_on_black">Orange on black</string>
+    <string name="preset_cyan_on_black">Cyan on black</string>
+    <string name="preset_pink_on_black">Pink on black</string>
+    <string name="preset_red_on_white">Red on white</string>
+    <string name="preset_blue_on_white">Blue on white</string>
+    <string name="preset_black_on_yellow">Black on yellow</string>
+    <string name="preset_white_on_red">White on red</string>
+    <string name="preset_white_on_blue">White on blue</string>
+    <string name="preset_white_on_green">White on green</string>
+    <string name="colors_custom">Custom</string>
+    <string name="control_colors">Colors: %1$s</string>
+
+    <!-- Export -->
+    <string name="control_export">Export as image</string>
+    <string name="export_chooser_title">Share image</string>
+    <string name="export_failed">The image could not be created.</string>
+
+    <!-- History page and launcher shortcuts -->
+    <string name="history_screen_title">History</string>
+    <string name="shortcut_new">New message</string>
+    <string name="shortcut_new_long">Write a new message</string>
+    <string name="shortcut_last">Last message</string>
+    <string name="shortcut_last_long">Show the last message</string>
+    <string name="shortcut_history">History</string>
+    <string name="shortcut_history_long">Open the history</string>
 </resources>

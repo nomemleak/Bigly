@@ -57,12 +57,16 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
@@ -84,6 +88,9 @@ fun HomeScreen(
     onDelete: (HistoryEntry) -> Unit,
     onClearHistory: () -> Unit,
     onOpenSettings: () -> Unit,
+    prefill: String? = null,
+    focusInput: Boolean = false,
+    onInputRequestHandled: () -> Unit = {},
 ) {
     var confirmClear by rememberSaveable { mutableStateOf(false) }
 
@@ -117,35 +124,43 @@ fun HomeScreen(
                 displayMode = displayMode,
                 onDisplayModeChange = onDisplayModeChange,
                 onShow = onShow,
+                prefill = prefill,
+                focusInput = focusInput,
+                onInputRequestHandled = onInputRequestHandled,
             )
         }
     }
 
     if (confirmClear) {
-        AlertDialog(
-            onDismissRequest = { confirmClear = false },
-            title = { Text(stringResource(R.string.history_clear_title)) },
-            text = { Text(stringResource(R.string.history_clear_message)) },
-            confirmButton = {
-                TextButton(onClick = {
-                    confirmClear = false
-                    onClearHistory()
-                }) { Text(stringResource(R.string.action_clear)) }
+        ClearHistoryDialog(
+            onConfirm = {
+                confirmClear = false
+                onClearHistory()
             },
-            dismissButton = {
-                TextButton(onClick = { confirmClear = false }) { Text(stringResource(R.string.action_cancel)) }
-            },
+            onDismiss = { confirmClear = false },
         )
     }
 }
 
 @Composable
-private fun HistoryList(
+fun ClearHistoryDialog(onConfirm: () -> Unit, onDismiss: () -> Unit) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(R.string.history_clear_title)) },
+        text = { Text(stringResource(R.string.history_clear_message)) },
+        confirmButton = { TextButton(onClick = onConfirm) { Text(stringResource(R.string.action_clear)) } },
+        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.action_cancel)) } },
+    )
+}
+
+@Composable
+fun HistoryList(
     history: List<HistoryEntry>,
     onShow: (String) -> Unit,
     onDelete: (HistoryEntry) -> Unit,
     onClearRequest: () -> Unit,
     modifier: Modifier = Modifier,
+    showHeader: Boolean = true,
 ) {
     if (history.isEmpty()) {
         Box(modifier.fillMaxWidth().padding(32.dp), contentAlignment = Alignment.Center) {
@@ -160,7 +175,7 @@ private fun HistoryList(
     }
 
     LazyColumn(modifier.fillMaxWidth(), contentPadding = PaddingValues(bottom = 8.dp)) {
-        item(key = "header") {
+        if (showHeader) item(key = "header") {
             Row(
                 Modifier
                     .fillMaxWidth()
@@ -210,8 +225,21 @@ private fun InputPanel(
     displayMode: DisplayMode,
     onDisplayModeChange: (DisplayMode) -> Unit,
     onShow: (String) -> Unit,
+    prefill: String?,
+    focusInput: Boolean,
+    onInputRequestHandled: () -> Unit,
 ) {
     var text by rememberSaveable { mutableStateOf("") }
+    val focusRequester = remember { FocusRequester() }
+
+    // Text shared from another app, or the "New message" shortcut.
+    LaunchedEffect(prefill, focusInput) {
+        if (prefill == null && !focusInput) return@LaunchedEffect
+        if (prefill != null) text = prefill
+        focusRequester.requestFocus()
+        onInputRequestHandled()
+    }
+
     val submit = {
         if (text.isNotBlank()) {
             onShow(text)
@@ -251,7 +279,9 @@ private fun InputPanel(
                     placeholder = { Text(stringResource(R.string.home_input_placeholder)) },
                     maxLines = 4,
                     keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier
+                        .weight(1f)
+                        .focusRequester(focusRequester),
                 )
                 Button(
                     onClick = submit,

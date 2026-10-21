@@ -1,0 +1,101 @@
+/*
+ * Bigly - show text in huge letters on your screen.
+ * Copyright (C) 2026 Bigly contributors
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ *
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
+
+package app.bigly.ui.home
+
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import app.bigly.R
+import app.bigly.data.HistoryEntry
+
+/** The whole history on one page, opened from the "History" shortcut. */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun HistoryScreen(
+    history: List<HistoryEntry>,
+    onShow: (String) -> Unit,
+    onDelete: (HistoryEntry) -> Unit,
+    onClearHistory: () -> Unit,
+    onBack: () -> Unit,
+) {
+    var confirmClear by rememberSaveable { mutableStateOf(false) }
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text(stringResource(R.string.history_screen_title)) },
+                navigationIcon = {
+                    IconButton(onClick = onBack) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
+                    }
+                },
+                actions = {
+                    if (history.isNotEmpty()) {
+                        TextButton(onClick = { confirmClear = true }) { Text(stringResource(R.string.history_clear)) }
+                    }
+                },
+            )
+        },
+    ) { padding ->
+        Column(
+            Modifier
+                .fillMaxSize()
+                .padding(top = padding.calculateTopPadding())
+                .navigationBarsPadding(),
+        ) {
+            HistoryList(
+                history = history,
+                onShow = onShow,
+                onDelete = onDelete,
+                onClearRequest = { confirmClear = true },
+                modifier = Modifier.weight(1f),
+                showHeader = false,
+            )
+        }
+    }
+
+    if (confirmClear) {
+        ClearHistoryDialog(
+            onConfirm = {
+                confirmClear = false
+                onClearHistory()
+            },
+            onDismiss = { confirmClear = false },
+        )
+    }
+}
