@@ -131,4 +131,6 @@
     <string name="shortcut_last_long">Afficher le dernier message</string>
     <string name="shortcut_history">Historique</string>
     <string name="shortcut_history_long">Ouvrir l’historique</string>
+    <string name="action_clear_text">Effacer le texte</string>
+    <string name="colors_more">Plus de couleurs</string>
 </resources>

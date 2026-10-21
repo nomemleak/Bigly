@@ -34,12 +34,15 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.bigly.data.AppSettings
+import app.bigly.data.ColorPreset
+import app.bigly.data.DisplayMode
 import app.bigly.data.ScrollDirection
 import app.bigly.data.SettingsRepository
 import app.bigly.data.TextEffect
 import app.bigly.data.ThemeMode
 import app.bigly.text.SharedText
 import app.bigly.ui.home.HistoryScreen
+import app.bigly.ui.home.HomeActions
 import app.bigly.ui.home.HomeScreen
 import app.bigly.ui.settings.SettingsActions
 import app.bigly.ui.settings.SettingsScreen
@@ -89,13 +92,9 @@ class MainActivity : ComponentActivity() {
 
                 when (screen) {
                     Screen.HOME -> HomeScreen(
+                        settings = current,
                         history = history,
-                        displayMode = current.displayMode,
-                        onDisplayModeChange = { mode -> launchInApp { app.settingsRepository.setDisplayMode(mode) } },
-                        onShow = { text -> show(text, current) },
-                        onDelete = { entry -> launchInApp { app.historyRepository.remove(entry.text) } },
-                        onClearHistory = { launchInApp { app.historyRepository.clear() } },
-                        onOpenSettings = { screen = Screen.SETTINGS },
+                        actions = homeActions(current) { screen = it },
                         prefill = pendingInput,
                         focusInput = focusInput,
                         onInputRequestHandled = {
@@ -146,6 +145,18 @@ class MainActivity : ComponentActivity() {
             Shortcuts.ACTION_HISTORY -> requestedScreen = Screen.HISTORY
             Shortcuts.ACTION_SHOW_LAST -> startActivity(DisplayActivity.showLastIntent(this))
         }
+    }
+
+    private fun homeActions(settings: AppSettings, navigate: (Screen) -> Unit) = object : HomeActions {
+        val repo = app.settingsRepository
+        override fun show(text: String) = this@MainActivity.show(text, settings)
+        override fun setDisplayMode(mode: DisplayMode) = launchInApp { repo.setDisplayMode(mode) }
+        override fun setEffect(effect: TextEffect) = launchInApp { repo.setEffect(effect) }
+        override fun applyPreset(preset: ColorPreset) = launchInApp { repo.setColors(preset.textColor, preset.backgroundColor) }
+        override fun setScrollSpeed(speed: Int) = launchInApp { repo.setScrollSpeed(speed) }
+        override fun setScrollDirection(direction: ScrollDirection) = launchInApp { repo.setScrollDirection(direction) }
+        override fun openHistory() = navigate(Screen.HISTORY)
+        override fun openSettings() = navigate(Screen.SETTINGS)
     }
 
     private fun ClipData.textAt(index: Int): CharSequence? =

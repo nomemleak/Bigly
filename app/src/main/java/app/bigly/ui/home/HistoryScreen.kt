@@ -20,6 +20,24 @@
 
 package app.bigly.ui.home
 
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -97,5 +115,83 @@ fun HistoryScreen(
             },
             onDismiss = { confirmClear = false },
         )
+    }
+}
+
+@Composable
+fun ClearHistoryDialog(onConfirm: () -> Unit, onDismiss: () -> Unit) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(R.string.history_clear_title)) },
+        text = { Text(stringResource(R.string.history_clear_message)) },
+        confirmButton = { TextButton(onClick = onConfirm) { Text(stringResource(R.string.action_clear)) } },
+        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.action_cancel)) } },
+    )
+}
+
+@Composable
+fun HistoryList(
+    history: List<HistoryEntry>,
+    onShow: (String) -> Unit,
+    onDelete: (HistoryEntry) -> Unit,
+    onClearRequest: () -> Unit,
+    modifier: Modifier = Modifier,
+    showHeader: Boolean = true,
+) {
+    if (history.isEmpty()) {
+        Box(modifier.fillMaxWidth().padding(32.dp), contentAlignment = Alignment.Center) {
+            Text(
+                text = stringResource(R.string.history_empty),
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.Center,
+            )
+        }
+        return
+    }
+
+    LazyColumn(modifier.fillMaxWidth(), contentPadding = PaddingValues(bottom = 8.dp)) {
+        if (showHeader) item(key = "header") {
+            Row(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(start = 16.dp, end = 8.dp, top = 8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = stringResource(R.string.history_title),
+                    style = MaterialTheme.typography.titleSmall,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier
+                        .weight(1f)
+                        .semantics { heading() },
+                )
+                TextButton(onClick = onClearRequest) { Text(stringResource(R.string.history_clear)) }
+            }
+        }
+        items(history, key = { it.text }) { entry ->
+            ListItem(
+                headlineContent = {
+                    Text(
+                        text = entry.text,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis,
+                        style = MaterialTheme.typography.bodyLarge,
+                    )
+                },
+                trailingContent = {
+                    IconButton(onClick = { onDelete(entry) }) {
+                        Icon(
+                            Icons.Outlined.Delete,
+                            contentDescription = stringResource(R.string.history_delete_item, entry.text.take(40)),
+                        )
+                    }
+                },
+                colors = ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.surface),
+                modifier = Modifier
+                    .animateItem()
+                    .clickable(onClickLabel = stringResource(R.string.history_show_again)) { onShow(entry.text) },
+            )
+        }
     }
 }
