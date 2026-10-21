@@ -20,5 +20,30 @@
 
 package app.bigly.data
 
-/** A message that was shown on screen. [timestamp] is in milliseconds since the epoch. */
-data class HistoryEntry(val text: String, val timestamp: Long)
+/**
+ * A message that was shown on screen. [timestamp] is in milliseconds since the epoch.
+ * [style] is how it looked (null for entries saved by Bigly 1.0 and 1.1).
+ */
+data class HistoryEntry(val text: String, val timestamp: Long, val style: MessageStyle? = null)
+
+/** The look of one message, saved with it in the history and restored when it is replayed. */
+data class MessageStyle(
+    val textColor: Int,
+    val backgroundColor: Int,
+    val effect: TextEffect,
+    val displayMode: DisplayMode,
+)
+
+fun AppSettings.toMessageStyle() = MessageStyle(textColor, backgroundColor, effect, displayMode)
+
+fun AppSettings.withStyle(style: MessageStyle?): AppSettings =
+    if (style == null) {
+        this
+    } else {
+        copy(
+            textColor = style.textColor,
+            backgroundColor = style.backgroundColor,
+            effect = style.effect,
+            displayMode = style.displayMode,
+        )
+    }

@@ -73,7 +73,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -97,6 +96,7 @@ import app.bigly.data.AppSettings
 import app.bigly.data.ColorPreset
 import app.bigly.data.DisplayMode
 import app.bigly.data.HistoryEntry
+import app.bigly.data.MessageStyle
 import app.bigly.data.ScrollDirection
 import app.bigly.data.TextEffect
 import app.bigly.ui.display.rainbowBrush
@@ -112,6 +112,7 @@ interface HomeActions {
     fun setDisplayMode(mode: DisplayMode)
     fun setEffect(effect: TextEffect)
     fun applyPreset(preset: ColorPreset)
+    fun applyStyle(style: MessageStyle)
     fun setScrollSpeed(speed: Int)
     fun setScrollDirection(direction: ScrollDirection)
     fun openHistory()
@@ -128,17 +129,18 @@ fun HomeScreen(
     settings: AppSettings,
     history: List<HistoryEntry>,
     actions: HomeActions,
+    text: String,
+    onTextChange: (String) -> Unit,
     prefill: String? = null,
     focusInput: Boolean = false,
     onInputRequestHandled: () -> Unit = {},
 ) {
-    var text by rememberSaveable { mutableStateOf("") }
     val focusRequester = remember { FocusRequester() }
 
     // Text shared from another app, or the "New message" shortcut.
     LaunchedEffect(prefill, focusInput) {
         if (prefill == null && !focusInput) return@LaunchedEffect
-        if (prefill != null) text = prefill
+        if (prefill != null) onTextChange(prefill)
         focusRequester.requestFocus()
         onInputRequestHandled()
     }
@@ -173,7 +175,7 @@ fun HomeScreen(
         ) {
             PreviewInput(
                 text = text,
-                onTextChange = { text = it },
+                onTextChange = onTextChange,
                 settings = settings,
                 focusRequester = focusRequester,
                 modifier = Modifier
@@ -183,7 +185,10 @@ fun HomeScreen(
             )
 
             if (!typing && history.isNotEmpty()) {
-                RecentRow(history) { text = it }
+                RecentRow(history) { entry ->
+                    onTextChange(entry.text)
+                    entry.style?.let(actions::applyStyle)
+                }
             }
 
             ThemeRow(settings = settings, onSelect = actions::applyPreset, onMore = actions::openSettings)
@@ -289,11 +294,12 @@ private fun previewFontSize(text: String, widthDp: Float, heightDp: Float): Floa
 }
 
 @Composable
-private fun RecentRow(history: List<HistoryEntry>, onPick: (String) -> Unit) {
+private fun RecentRow(history: List<HistoryEntry>, onPick: (HistoryEntry) -> Unit) {
     LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         items(history.take(10), key = { it.text }) { entry ->
             SuggestionChip(
-                onClick = { onPick(entry.text) },
+                onClick = { onPick(entry) },
+                icon = entry.style?.let { style -> @Composable { StyleSwatch(style, Modifier.size(20.dp)) } },
                 label = {
                     Text(
                         text = entry.text.replace('\n', ' '),

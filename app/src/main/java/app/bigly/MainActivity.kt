@@ -33,13 +33,18 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.lifecycleScope
 import app.bigly.data.AppSettings
 import app.bigly.data.ColorPreset
 import app.bigly.data.DisplayMode
+import app.bigly.data.HistoryEntry
+import app.bigly.data.MessageStyle
 import app.bigly.data.ScrollDirection
 import app.bigly.data.SettingsRepository
 import app.bigly.data.TextEffect
 import app.bigly.data.ThemeMode
+import app.bigly.data.toMessageStyle
+import app.bigly.data.withStyle
 import app.bigly.text.SharedText
 import app.bigly.ui.home.HistoryScreen
 import app.bigly.ui.home.HomeActions
@@ -81,6 +86,8 @@ class MainActivity : ComponentActivity() {
 
             BiglyTheme(themeMode = current.themeMode, dynamicColor = current.dynamicColor) {
                 var screen by rememberSaveable { mutableStateOf(Screen.HOME) }
+                // Kept here, above the screens, so the message survives a trip to the settings.
+                var inputText by rememberSaveable { mutableStateOf("") }
                 BackHandler(enabled = screen != Screen.HOME) { screen = Screen.HOME }
 
                 LaunchedEffect(requestedScreen) {
@@ -95,6 +102,8 @@ class MainActivity : ComponentActivity() {
                         settings = current,
                         history = history,
                         actions = homeActions(current) { screen = it },
+                        text = inputText,
+                        onTextChange = { inputText = it },
                         prefill = pendingInput,
                         focusInput = focusInput,
                         onInputRequestHandled = {
@@ -104,7 +113,7 @@ class MainActivity : ComponentActivity() {
                     )
                     Screen.HISTORY -> HistoryScreen(
                         history = history,
-                        onShow = { text -> show(text, current) },
+                        onShow = { entry -> replay(entry, current) },
                         onDelete = { entry -> launchInApp { app.historyRepository.remove(entry.text) } },
                         onClearHistory = { launchInApp { app.historyRepository.clear() } },
                         onBack = { screen = Screen.HOME },
@@ -153,6 +162,7 @@ class MainActivity : ComponentActivity() {
         override fun setDisplayMode(mode: DisplayMode) = launchInApp { repo.setDisplayMode(mode) }
         override fun setEffect(effect: TextEffect) = launchInApp { repo.setEffect(effect) }
         override fun applyPreset(preset: ColorPreset) = launchInApp { repo.setColors(preset.textColor, preset.backgroundColor) }
+        override fun applyStyle(style: MessageStyle) = launchInApp { repo.applyStyle(style) }
         override fun setScrollSpeed(speed: Int) = launchInApp { repo.setScrollSpeed(speed) }
         override fun setScrollDirection(direction: ScrollDirection) = launchInApp { repo.setScrollDirection(direction) }
         override fun openHistory() = navigate(Screen.HISTORY)
@@ -162,10 +172,20 @@ class MainActivity : ComponentActivity() {
     private fun ClipData.textAt(index: Int): CharSequence? =
         if (itemCount > index) getItemAt(index).text else null
 
+    /** Saves the message with its current look, then shows it. */
     private fun show(text: String, settings: AppSettings) {
         if (text.isBlank()) return
-        launchInApp { app.historyRepository.add(text, settings.historySize) }
+        launchInApp { app.historyRepository.add(text, settings.historySize, settings.toMessageStyle()) }
         startActivity(DisplayActivity.intent(this, text.trim()))
+    }
+
+    /** Shows a message from the history with the colors, effect and mode it was saved with. */
+    private fun replay(entry: HistoryEntry, settings: AppSettings) {
+        val style = entry.style ?: settings.toMessageStyle()
+        lifecycleScope.launch {
+            app.settingsRepository.applyStyle(style)
+            show(entry.text, settings.withStyle(style))
+        }
     }
 
     /** For writes that must finish even if the screen goes away. */

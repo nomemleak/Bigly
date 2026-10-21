@@ -70,6 +70,16 @@ class SettingsRepository(private val dataStore: DataStore<Preferences>) {
         }
     }
 
+    /** Restores the look a message was shown with. */
+    suspend fun applyStyle(style: MessageStyle) {
+        dataStore.edit {
+            it[Keys.TEXT_COLOR] = style.textColor
+            it[Keys.BACKGROUND_COLOR] = style.backgroundColor
+            it[Keys.EFFECT] = style.effect.name
+            it[Keys.DISPLAY_MODE] = style.displayMode.name
+        }
+    }
+
     suspend fun setTextColor(value: Int) = set(Keys.TEXT_COLOR, value)
     suspend fun setBackgroundColor(value: Int) = set(Keys.BACKGROUND_COLOR, value)
 

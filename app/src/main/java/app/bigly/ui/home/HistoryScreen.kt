@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.outlined.Delete
@@ -33,6 +34,13 @@ import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.sp
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
@@ -60,13 +68,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import app.bigly.R
 import app.bigly.data.HistoryEntry
+import app.bigly.data.MessageStyle
+import app.bigly.ui.theme.DisplayTextStyle
 
 /** The whole history on one page, opened from the "History" shortcut. */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HistoryScreen(
     history: List<HistoryEntry>,
-    onShow: (String) -> Unit,
+    onShow: (HistoryEntry) -> Unit,
     onDelete: (HistoryEntry) -> Unit,
     onClearHistory: () -> Unit,
     onBack: () -> Unit,
@@ -132,7 +142,7 @@ fun ClearHistoryDialog(onConfirm: () -> Unit, onDismiss: () -> Unit) {
 @Composable
 fun HistoryList(
     history: List<HistoryEntry>,
-    onShow: (String) -> Unit,
+    onShow: (HistoryEntry) -> Unit,
     onDelete: (HistoryEntry) -> Unit,
     onClearRequest: () -> Unit,
     modifier: Modifier = Modifier,
@@ -179,6 +189,7 @@ fun HistoryList(
                         style = MaterialTheme.typography.bodyLarge,
                     )
                 },
+                leadingContent = entry.style?.let { style -> @Composable { StyleSwatch(style, Modifier.size(40.dp), 14.sp) } },
                 trailingContent = {
                     IconButton(onClick = { onDelete(entry) }) {
                         Icon(
@@ -190,8 +201,22 @@ fun HistoryList(
                 colors = ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.surface),
                 modifier = Modifier
                     .animateItem()
-                    .clickable(onClickLabel = stringResource(R.string.history_show_again)) { onShow(entry.text) },
+                    .clickable(onClickLabel = stringResource(R.string.history_show_again)) { onShow(entry) },
             )
         }
+    }
+}
+
+/** Tiny "Aa" in the colors a message was shown with. Decorative. */
+@Composable
+fun StyleSwatch(style: MessageStyle, modifier: Modifier = Modifier, textSize: TextUnit = 9.sp) {
+    Box(
+        modifier
+            .clearAndSetSemantics { }
+            .background(Color(style.backgroundColor), RoundedCornerShape(6.dp))
+            .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(6.dp)),
+        contentAlignment = Alignment.Center,
+    ) {
+        Text("Aa", style = DisplayTextStyle.copy(color = Color(style.textColor), fontSize = textSize))
     }
 }

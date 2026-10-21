@@ -44,6 +44,7 @@ import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import app.bigly.data.AppSettings
+import app.bigly.data.toMessageStyle
 import app.bigly.ui.display.DisplayScreen
 import app.bigly.ui.display.OrientationLock
 import app.bigly.ui.theme.BiglyTheme
@@ -77,8 +78,14 @@ class DisplayActivity : ComponentActivity() {
             val settings by app.settingsRepository.settings.collectAsStateWithLifecycle(initialValue = null)
             val text by produceState<String?>(initialValue = initialText) {
                 if (value == null) {
-                    val latest = app.historyRepository.latest()?.text
-                    if (latest == null) openHomeInstead() else value = latest
+                    val latest = app.historyRepository.latest()
+                    if (latest == null) {
+                        openHomeInstead()
+                    } else {
+                        // The widget and the shortcut replay the last message as it looked.
+                        latest.style?.let { app.settingsRepository.applyStyle(it) }
+                        value = latest.text
+                    }
                 }
             }
             var orientationLock by rememberSaveable { mutableStateOf(OrientationLock.AUTO) }
@@ -89,6 +96,9 @@ class DisplayActivity : ComponentActivity() {
             val message = text ?: return@setContent
 
             LaunchedEffect(current.keepScreenOn, current.maxBrightness) { applyWindowSettings(current) }
+            // Colors or effect changed from the controls: the history remembers the new look.
+            val style = current.toMessageStyle()
+            LaunchedEffect(message, style) { app.historyRepository.updateStyle(message, style) }
 
             BiglyTheme(themeMode = current.themeMode, dynamicColor = current.dynamicColor) {
                 DisplayScreen(

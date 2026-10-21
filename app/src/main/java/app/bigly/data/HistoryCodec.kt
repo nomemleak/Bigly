@@ -24,37 +24,71 @@ package app.bigly.data
  * Plain text format of the history file:
  *
  * ```
- * bigly-history 1
- * <timestamp>\t<escaped text>
+ * bigly-history 2
+ * <timestamp>\t<style>\t<escaped text>
  * ```
  *
+ * `<style>` is `-` or `TEXTCOLOR,BACKGROUND,EFFECT,MODE` (colors as 8 hex digits).
  * Backslashes, tabs and line breaks inside a message are escaped, so every
- * entry stays on one line. Damaged lines are skipped instead of failing.
+ * entry stays on one line. Files written by version 1 (`<timestamp>\t<text>`)
+ * are still read. Damaged lines are skipped instead of failing.
  */
 object HistoryCodec {
 
-    private const val HEADER = "bigly-history 1"
+    private const val HEADER_V1 = "bigly-history 1"
+    private const val HEADER = "bigly-history 2"
+    private const val NO_STYLE = "-"
 
     fun encode(entries: List<HistoryEntry>): String = buildString {
         append(HEADER).append('\n')
         for (entry in entries) {
-            append(entry.timestamp).append('\t').append(escape(entry.text)).append('\n')
+            append(entry.timestamp).append('\t')
+            append(encodeStyle(entry.style)).append('\t')
+            append(escape(entry.text)).append('\n')
         }
     }
 
     fun decode(data: String): List<HistoryEntry> {
         val lines = data.split('\n')
-        if (lines.firstOrNull()?.trimEnd('\r') != HEADER) return emptyList()
-        return lines.drop(1).mapNotNull(::decodeLine)
+        return when (lines.firstOrNull()?.trimEnd('\r')) {
+            HEADER -> lines.drop(1).mapNotNull(::decodeLine)
+            HEADER_V1 -> lines.drop(1).mapNotNull(::decodeLineV1)
+            else -> emptyList()
+        }
     }
 
     private fun decodeLine(line: String): HistoryEntry? {
+        val parts = line.split('\t', limit = 3)
+        if (parts.size != 3) return null
+        val timestamp = parts[0].toLongOrNull() ?: return null
+        val text = unescape(parts[2]) ?: return null
+        if (text.isEmpty()) return null
+        return HistoryEntry(text, timestamp, decodeStyle(parts[1]))
+    }
+
+    private fun decodeLineV1(line: String): HistoryEntry? {
         val tab = line.indexOf('\t')
         if (tab <= 0) return null
         val timestamp = line.substring(0, tab).toLongOrNull() ?: return null
         val text = unescape(line.substring(tab + 1)) ?: return null
         if (text.isEmpty()) return null
         return HistoryEntry(text, timestamp)
+    }
+
+    private fun encodeStyle(style: MessageStyle?): String {
+        if (style == null) return NO_STYLE
+        return "%08X,%08X,%s,%s".format(style.textColor, style.backgroundColor, style.effect.name, style.displayMode.name)
+    }
+
+    /** An unreadable style is dropped; the message itself is kept. */
+    private fun decodeStyle(value: String): MessageStyle? {
+        val parts = value.split(',')
+        if (parts.size != 4) return null
+        val text = parts[0].toLongOrNull(16)?.toInt() ?: return null
+        val background = parts[1].toLongOrNull(16)?.toInt() ?: return null
+        val effect = TextEffect.entries.firstOrNull { it.name == parts[2] } ?: return null
+        val mode = DisplayMode.entries.firstOrNull { it.name == parts[3] } ?: return null
+        return MessageStyle(text, background, effect, mode)
     }
 
     internal fun escape(text: String): String = buildString(text.length) {

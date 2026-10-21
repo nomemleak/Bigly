@@ -12,7 +12,7 @@ Bigly est une petite application Android libre et open source. Tapez un message,
 - **Mode fixe** : la taille du texte s'ajuste toute seule pour remplir l'écran. Le texte sur plusieurs lignes est pris en charge, sans jamais couper un mot.
 - **Mode défilant** (bandeau LED) : vitesse réglable, de gauche à droite ou de droite à gauche, en boucle continue, avec un bouton pause.
 - **Effets**, un seul à la fois : clignotement, arc-en-ciel animé, tremblement, pulsation, avec une vitesse réglable.
-- **Historique** des derniers messages (20 par défaut, jusqu'à 100) : rejouez-les d'un tap, supprimez-en un ou effacez tout.
+- **Historique** des derniers messages (20 par défaut, jusqu'à 100) : rejouez-les d'un tap avec les couleurs, l'effet et le mode qu'ils avaient ; supprimez-en un ou effacez tout.
 - **Couleurs** : texte et fond depuis une palette ou n'importe quelle couleur personnalisée, et un avertissement quand le contraste est faible.
 - Garde l'écran allumé et peut pousser la luminosité au maximum pendant l'affichage.
 - Orientation automatique, avec un bouton pour verrouiller en portrait ou en paysage.

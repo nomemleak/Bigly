@@ -60,8 +60,11 @@ class HistoryRepository(
 
     suspend fun latest(): HistoryEntry? = load().firstOrNull()
 
-    suspend fun add(text: String, maxSize: Int): List<HistoryEntry> =
-        update { HistoryList.add(it, text, clock(), maxSize) }
+    suspend fun add(text: String, maxSize: Int, style: MessageStyle? = null): List<HistoryEntry> =
+        update { HistoryList.add(it, text, clock(), maxSize, style) }
+
+    suspend fun updateStyle(text: String, style: MessageStyle): List<HistoryEntry> =
+        update { HistoryList.updateStyle(it, text, style) }
 
     suspend fun remove(text: String): List<HistoryEntry> =
         update { HistoryList.remove(it, text) }

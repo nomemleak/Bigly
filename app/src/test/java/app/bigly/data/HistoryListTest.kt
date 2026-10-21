@@ -80,4 +80,30 @@ class HistoryListTest {
         assertEquals(listOf("m5", "m4"), HistoryList.trim(list, 2).map { it.text })
         assertTrue(HistoryList.trim(list, 0).size == 1)
     }
+
+    private val yellow = MessageStyle(0xFFFFEB3B.toInt(), 0xFF000000.toInt(), TextEffect.BLINK, DisplayMode.FIXED)
+    private val blue = MessageStyle(0xFFFFFFFF.toInt(), 0xFF1565C0.toInt(), TextEffect.NONE, DisplayMode.SCROLLING)
+
+    @Test
+    fun styleIsStoredWithTheEntry() {
+        val list = HistoryList.add(emptyList(), "hi", 1, 20, yellow)
+        assertEquals(yellow, list.single().style)
+    }
+
+    @Test
+    fun showingAgainWithAnotherStyleReplacesIt() {
+        var list = HistoryList.add(emptyList(), "hi", 1, 20, yellow)
+        list = HistoryList.add(list, "hi", 2, 20, blue)
+        assertEquals(listOf(HistoryEntry("hi", 2, blue)), list)
+    }
+
+    @Test
+    fun updateStyleKeepsOrderAndIgnoresUnknownText() {
+        var list = HistoryList.add(emptyList(), "a", 1, 20, yellow)
+        list = HistoryList.add(list, "b", 2, 20, yellow)
+        val updated = HistoryList.updateStyle(list, "a", blue)
+        assertEquals(listOf("b", "a"), updated.map { it.text })
+        assertEquals(blue, updated[1].style)
+        assertEquals(list, HistoryList.updateStyle(list, "missing", blue))
+    }
 }
