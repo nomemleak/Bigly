@@ -48,9 +48,25 @@ class HistoryCodecTest {
     }
 
     @Test
-    fun damagedLinesAreSkipped() {
+    fun version1FilesAreStillRead() {
         val data = "bigly-history 1\n1\tgood\nnot a line\nabc\tbad timestamp\n2\tbad \\x escape\n3\t\n4\tlast\n"
         assertEquals(listOf(HistoryEntry("good", 1), HistoryEntry("last", 4)), HistoryCodec.decode(data))
+    }
+
+    @Test
+    fun styleIsSavedWithTheMessage() {
+        val style = MessageStyle(0xFFFFEB3B.toInt(), 0xFF000000.toInt(), TextEffect.RAINBOW, DisplayMode.SCROLLING)
+        val entries = listOf(
+            HistoryEntry("styled\nmessage", 10, style),
+            HistoryEntry("plain", 5, null),
+        )
+        assertEquals(entries, HistoryCodec.decode(HistoryCodec.encode(entries)))
+    }
+
+    @Test
+    fun damagedStyleKeepsTheMessage() {
+        val data = "bigly-history 2\n1\tFFFFFFFF,FF000000,UNKNOWN_EFFECT,FIXED\thello\n2\tnot a style\tworld\n3\tonly two parts\n"
+        assertEquals(listOf(HistoryEntry("hello", 1), HistoryEntry("world", 2)), HistoryCodec.decode(data))
     }
 
     @Test

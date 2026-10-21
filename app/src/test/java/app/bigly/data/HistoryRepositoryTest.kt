@@ -121,4 +121,17 @@ class HistoryRepositoryTest {
         repo.add("x", 20)
         assertTrue(file.exists())
     }
+
+    @Test
+    fun styleIsPersistedAndUpdated() = runTest {
+        val file = File(folder.root, "history.txt")
+        val repo = HistoryRepository(file, StandardTestDispatcher(testScheduler), clock = { now++ })
+        val first = MessageStyle(0xFF000000.toInt(), 0xFFFFFFFF.toInt(), TextEffect.PULSE, DisplayMode.FIXED)
+        val second = MessageStyle(0xFF00E676.toInt(), 0xFF000000.toInt(), TextEffect.SHAKE, DisplayMode.SCROLLING)
+        repo.add("hello", 20, first)
+        assertEquals(first, HistoryRepository(file, StandardTestDispatcher(testScheduler)).latest()?.style)
+
+        repo.updateStyle("hello", second)
+        assertEquals(second, HistoryRepository(file, StandardTestDispatcher(testScheduler)).latest()?.style)
+    }
 }

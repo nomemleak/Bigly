@@ -37,13 +37,18 @@ object HistoryList {
         text: String,
         timestamp: Long,
         maxSize: Int,
+        style: MessageStyle? = null,
     ): List<HistoryEntry> {
         val limit = maxSize.coerceAtLeast(1)
         val clean = normalize(text)
         if (clean.isEmpty()) return entries.take(limit)
         val others = entries.filterNot { it.text == clean }
-        return (listOf(HistoryEntry(clean, timestamp)) + others).take(limit)
+        return (listOf(HistoryEntry(clean, timestamp, style)) + others).take(limit)
     }
+
+    /** Changes the look saved with [text], if that message is in the list. Order is kept. */
+    fun updateStyle(entries: List<HistoryEntry>, text: String, style: MessageStyle): List<HistoryEntry> =
+        entries.map { if (it.text == text) it.copy(style = style) else it }
 
     fun remove(entries: List<HistoryEntry>, text: String): List<HistoryEntry> =
         entries.filterNot { it.text == text }
