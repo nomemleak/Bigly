@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Bigly - show text in huge letters on your screen.
+  Copyright (C) 2026 Bigly contributors
+  SPDX-License-Identifier: GPL-3.0-or-later
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:autoMirrored="false"
+    android:tint="?android:attr/colorControlNormal"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path android:fillColor="@android:color/white" android:fillType="evenOdd" android:pathData="M9.5,6.5h5a1.5,1.5 0 0 1 1.5,1.5v8a1.5,1.5 0 0 1 -1.5,1.5h-5a1.5,1.5 0 0 1 -1.5,-1.5v-8a1.5,1.5 0 0 1 1.5,-1.5z M9.5,8v8h5v-8z" />
+    <path android:fillColor="@android:color/white" android:pathData="M12,1a11,11 0 0 1 10.6,8h-2.1a9,9 0 0 0 -8.5,-6z M19.5,9.5l3.5,0l-0.5,-3.5z M12,23a11,11 0 0 1 -10.6,-8h2.1a9,9 0 0 0 8.5,6z M4.5,14.5l-3.5,0l0.5,3.5z" />
+</vector>

@@ -1,0 +1,16 @@
+<p>Bigly affiche votre texte en lettres géantes, sur tout l'écran de votre téléphone. Brandissez-le dans un concert, une salle bruyante, à l'aéroport, ou pour parler à quelqu'un de l'autre côté de la rue.</p>
+<p><b>Fonctions</b></p>
+<ul>
+<li><b>Mode fixe</b> : la taille du texte s'ajuste toute seule pour remplir l'écran. Le texte sur plusieurs lignes est pris en charge, sans jamais couper un mot.</li>
+<li><b>Mode défilant</b> façon bandeau LED : vitesse réglable, de gauche à droite ou de droite à gauche, en boucle continue.</li>
+<li><b>Effets</b>, un seul à la fois : clignotement, arc-en-ciel animé, tremblement, pulsation.</li>
+<li><b>Historique</b> de vos derniers messages (20 par défaut) : rejouez-les d'un tap, supprimez-en un ou effacez tout.</li>
+<li><b>Couleurs</b> du texte et du fond : palette ou choix libre, avec les préréglages noir sur blanc et blanc sur noir.</li>
+<li>Garde l'écran allumé et peut pousser la luminosité au maximum pendant l'affichage.</li>
+<li>Orientation automatique, avec un bouton pour verrouiller en portrait ou en paysage.</li>
+<li><b>Widget d'écran d'accueil</b> : un tap affiche votre dernier message en plein écran.</li>
+<li>Couleurs Material You sur Android 12 et plus, thème clair, sombre ou système.</li>
+<li>Respecte le réglage système « supprimer les animations ».</li>
+</ul>
+<p><b>Vie privée</b> : aucune permission, aucun accès réseau, aucune publicité, aucun traqueur. Votre historique reste sur votre appareil.</p>
+<p>Bigly est un logiciel libre, sous licence GNU GPL v3.</p>
