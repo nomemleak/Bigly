@@ -27,7 +27,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.drawscope.CanvasDrawScope
 import androidx.compose.ui.text.TextMeasurer
+import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.drawText
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
@@ -131,7 +133,7 @@ object MessageImage {
         settings: AppSettings,
         density: Density,
         layoutDirection: LayoutDirection,
-        placement: () -> Pair<Offset, androidx.compose.ui.text.TextLayoutResult>,
+        placement: () -> Pair<Offset, TextLayoutResult>,
     ): ImageBitmap {
         val bitmap = ImageBitmap(width, height)
         val (topLeft, layout) = placement()
