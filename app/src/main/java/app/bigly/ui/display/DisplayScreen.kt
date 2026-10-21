@@ -53,6 +53,7 @@ import app.bigly.data.ColorPreset
 import app.bigly.data.DisplayMode
 import app.bigly.data.TextEffect
 import app.bigly.ui.theme.DisplayTextStyle
+import kotlin.math.max
 
 private val TextPadding = 12.dp
 
@@ -92,6 +93,14 @@ fun DisplayScreen(
     val measurer = rememberTextMeasurer()
     val density = LocalDensity.current
     val layoutDirection = LocalLayoutDirection.current
+    // The camera cutout is kept clear on both sides (and top and bottom), so the
+    // text stays centered on the physical screen instead of drifting away from the notch.
+    val cutout = WindowInsets.displayCutout
+    val cutoutHorizontal = with(density) {
+        max(cutout.getLeft(density, layoutDirection), cutout.getRight(density, layoutDirection)).toDp()
+    }
+    val cutoutVertical = with(density) { max(cutout.getTop(density), cutout.getBottom(density)).toDp() }
+
     val toggleLabel = stringResource(if (controlsVisible) R.string.display_hide_controls else R.string.display_show_controls)
 
     Box(
@@ -106,7 +115,7 @@ fun DisplayScreen(
     ) {
         val content = Modifier
             .fillMaxSize()
-            .windowInsetsPadding(WindowInsets.displayCutout)
+            .padding(horizontal = cutoutHorizontal, vertical = cutoutVertical)
             .onSizeChanged { contentSize = it }
             .textEffect(
                 effect = settings.effect,
