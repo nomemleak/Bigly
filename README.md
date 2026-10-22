@@ -4,6 +4,14 @@
 
 **Show any text in huge letters across your whole screen.** · [Version française](README.fr.md)
 
+<p align="center">
+  <a href="https://github.com/nomemleak/Bigly/releases/latest"><img src="https://raw.githubusercontent.com/Kunzisoft/Github-badge/main/get-it-on-github.png" alt="Get it on GitHub" height="80"></a>
+  <a href="https://apps.obtainium.imranr.dev/redirect?r=obtainium://add/https://github.com/nomemleak/Bigly"><img src="https://raw.githubusercontent.com/ImranR98/Obtainium/main/assets/graphics/badge_obtainium.png" alt="Get it on Obtainium" height="54"></a>
+  <a href="https://f-droid.org/packages/io.github.nomemleak.bigly/"><img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png" alt="Get it on F-Droid" height="80"></a>
+</p>
+
+<p align="center"><sub>The F-Droid link works once Bigly is accepted in F-Droid.</sub></p>
+
 Bigly is a small, free and open source Android app. Type a message, tap **Show**, and hold up your phone: at a concert, in a noisy room, at the airport, or to talk with someone across the street.
 
 ## Features
@@ -58,9 +66,13 @@ Every push to `main` is also built by GitHub Actions. The latest debug APK is at
 |---|---|
 | Language | Kotlin, Jetpack Compose, Material 3 |
 | Android | 8.0+ (minSdk 26), targets API 36 |
-| Application id | `app.bigly` (debug: `app.bigly.debug`) |
+| Application id | `io.github.nomemleak.bigly` (debug: `io.github.nomemleak.bigly.debug`) |
 
 See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for how the code is organized. Store metadata for F-Droid lives in `fastlane/metadata/android`.
+
+## Google developer verification
+
+Google plans to require, from 2026/2027, that developers of every app on certified Android devices send their identity to Google. Bigly will not do this. On first launch of each new version, a short notice from [FreeDroidWarn](https://github.com/woheller69/FreeDroidWarn) (Apache 2.0) explains it and links to [Keep Android Open](https://keepandroidopen.org/). Opening those links is up to you: Bigly itself still has no network access.
 
 ## License
 

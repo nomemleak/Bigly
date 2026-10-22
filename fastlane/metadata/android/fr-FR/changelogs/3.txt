@@ -1,0 +1,1 @@
+Nouvel accueil avec aperçu en direct, mise en page paysage, messages enregistrés avec leurs couleurs et leur effet, raccourcis, partage vers Bigly, emojis, export en image, 13 préréglages de couleurs, et un avertissement sur la vérification des développeurs par Google (FreeDroidWarn).

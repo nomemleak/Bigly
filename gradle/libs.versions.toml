@@ -8,6 +8,7 @@ lifecycle = "2.9.1"
 datastore = "1.1.7"
 coroutines = "1.10.2"
 junit = "4.13.2"
+freedroidwarn = "V1.14"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -24,6 +25,7 @@ androidx-compose-material-icons-core = { group = "androidx.compose.material", na
 kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
 kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutines" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
+freedroidwarn = { group = "com.github.woheller69", name = "FreeDroidWarn", version.ref = "freedroidwarn" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

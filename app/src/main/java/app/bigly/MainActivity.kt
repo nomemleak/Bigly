@@ -54,6 +54,7 @@ import app.bigly.ui.settings.SettingsScreen
 import app.bigly.ui.theme.BiglyTheme
 import app.bigly.util.isReduceMotionEnabled
 import kotlinx.coroutines.launch
+import org.woheller69.freeDroidWarn.FreeDroidWarn
 
 private enum class Screen { HOME, HISTORY, SETTINGS }
 
@@ -75,7 +76,11 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         Shortcuts.publish(this)
         // After a rotation the intent was already handled.
-        if (savedInstanceState == null) handleIntent(intent)
+        if (savedInstanceState == null) {
+            handleIntent(intent)
+            // Explains, once per version, why Bigly will not register with Google's developer verification.
+            FreeDroidWarn.showWarningOnUpgrade(this, BuildConfig.VERSION_CODE)
+        }
 
         val actions = RepositorySettingsActions(app.settingsRepository)
 
