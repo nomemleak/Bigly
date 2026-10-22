@@ -1,10 +1,13 @@
 name: Release
 
-# Push a tag such as v1.2.0 to publish a signed APK on the GitHub Releases page
-# (used by the "GitHub" and "Obtainium" install links of the README).
+# Publishes a signed APK on the GitHub Releases page (used by the "GitHub" and
+# "Obtainium" install links of the README). Either push a tag such as v1.2.0, or
+# push main to the "release" branch: the tag is then created from versionName.
 on:
   push:
     tags: [ 'v*' ]
+    branches: [ release ]
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -43,7 +46,16 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          VERSION="${GITHUB_REF_NAME#v}"
+          if [ "$GITHUB_REF_TYPE" = tag ]; then
+            TAG="$GITHUB_REF_NAME"
+          else
+            TAG="v$(grep -oP 'versionName = "\K[^"]+' app/build.gradle.kts)"
+          fi
+          if gh release view "$TAG" > /dev/null 2>&1; then
+            echo "::error title=Release exists::$TAG is already published. Bump versionName first."
+            exit 1
+          fi
+          VERSION="${TAG#v}"
           CODE=$(grep -oP 'versionCode = \K[0-9]+' app/build.gradle.kts)
           cp app/build/outputs/apk/release/app-release.apk "bigly-$VERSION.apk"
           {
@@ -53,10 +65,10 @@ jobs:
             echo "### Français"
             cat "fastlane/metadata/android/fr-FR/changelogs/$CODE.txt"
           } > notes.md
-          gh release create "$GITHUB_REF_NAME" "bigly-$VERSION.apk" \
+          gh release create "$TAG" "bigly-$VERSION.apk" \
             --title "Bigly $VERSION" \
             --notes-file notes.md \
-            --verify-tag
+            --target "$GITHUB_SHA"
 
       - name: Remove the key
         if: always()
