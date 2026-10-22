@@ -48,6 +48,7 @@ import app.bigly.data.AppSettings
 import app.bigly.data.toMessageStyle
 import app.bigly.ui.display.DisplayScreen
 import app.bigly.ui.display.OrientationLock
+import app.bigly.ui.display.next
 import app.bigly.ui.theme.BiglyTheme
 import app.bigly.util.ImageExport
 import app.bigly.util.isReduceMotionEnabled
