@@ -14,6 +14,15 @@
 
 Bigly est une petite application Android libre et open source. Tapez un message, appuyez sur **Afficher**, et brandissez votre téléphone : dans un concert, une salle bruyante, à l'aéroport, ou pour parler à quelqu'un de l'autre côté de la rue.
 
+<p align="center">
+  <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/1.png" alt="Écran d'accueil" width="200">
+  <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/2.png" alt="Message plein écran" width="200">
+  <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/3.png" alt="Contrôles de l'affichage" width="200">
+</p>
+<p align="center">
+  <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/4.png" alt="Paysage" width="460">
+</p>
+
 ## Fonctions
 
 - **Aperçu en direct** : la grande zone de saisie montre le message dans ses couleurs et sa police finales. Thèmes de couleurs, mode d'affichage et effets sont juste en dessous, sans passer par les réglages.
