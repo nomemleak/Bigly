@@ -24,6 +24,7 @@ import android.content.ClipData
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
+import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
 import android.view.WindowManager
@@ -89,6 +90,7 @@ class DisplayActivity : ComponentActivity() {
                 }
             }
             var orientationLock by rememberSaveable { mutableStateOf(OrientationLock.AUTO) }
+            var firstOrientationLock by rememberSaveable { mutableStateOf(OrientationLock.AUTO) }
 
             LaunchedEffect(orientationLock) { applyOrientation(orientationLock) }
 
@@ -106,7 +108,12 @@ class DisplayActivity : ComponentActivity() {
                     settings = current,
                     reduceMotion = reduceMotion,
                     orientationLock = orientationLock,
-                    onOrientationLockChange = { orientationLock = it },
+                    onOrientationClick = {
+                        val isLandscape = resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+                        val next = orientationLock.next(isLandscape, firstOrientationLock)
+                        if (orientationLock == OrientationLock.AUTO) firstOrientationLock = next
+                        orientationLock = next
+                    },
                     onEffectChange = { effect -> app.appScope.launch { app.settingsRepository.setEffect(effect) } },
                     onPresetChange = { preset ->
                         app.appScope.launch { app.settingsRepository.setColors(preset.textColor, preset.backgroundColor) }

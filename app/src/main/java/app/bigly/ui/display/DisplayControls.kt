@@ -57,10 +57,16 @@ import app.bigly.ui.settings.labelRes
 
 enum class OrientationLock { AUTO, PORTRAIT, LANDSCAPE }
 
-fun OrientationLock.next(): OrientationLock = when (this) {
-    OrientationLock.AUTO -> OrientationLock.PORTRAIT
-    OrientationLock.PORTRAIT -> OrientationLock.LANDSCAPE
-    OrientationLock.LANDSCAPE -> OrientationLock.AUTO
+/**
+ * Lock that follows [this] when the orientation button is tapped. The first tap
+ * always turns the screen ([isLandscape] is the current orientation), the second
+ * turns it back and keeps it locked, the third returns to automatic rotation.
+ * [firstLock] is the lock chosen by the first tap.
+ */
+fun OrientationLock.next(isLandscape: Boolean, firstLock: OrientationLock): OrientationLock = when (this) {
+    OrientationLock.AUTO -> if (isLandscape) OrientationLock.PORTRAIT else OrientationLock.LANDSCAPE
+    firstLock -> if (this == OrientationLock.PORTRAIT) OrientationLock.LANDSCAPE else OrientationLock.PORTRAIT
+    else -> OrientationLock.AUTO
 }
 
 /**
@@ -75,7 +81,7 @@ fun DisplayControls(
     settings: AppSettings,
     onPresetChange: (ColorPreset) -> Unit,
     orientationLock: OrientationLock,
-    onOrientationLockChange: (OrientationLock) -> Unit,
+    onOrientationClick: () -> Unit,
     showPause: Boolean,
     paused: Boolean,
     onPausedChange: (Boolean) -> Unit,
@@ -145,7 +151,7 @@ fun DisplayControls(
                     }
                 }
 
-                IconButton(onClick = { onOrientationLockChange(orientationLock.next()) }) {
+                IconButton(onClick = onOrientationClick) {
                     val (icon, description) = when (orientationLock) {
                         OrientationLock.AUTO -> R.drawable.ic_orientation_auto to R.string.control_orientation_auto
                         OrientationLock.PORTRAIT -> R.drawable.ic_orientation_portrait to R.string.control_orientation_portrait
