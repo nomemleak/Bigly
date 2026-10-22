@@ -1,0 +1,1 @@
+New home screen with a live preview, landscape layout, messages saved with their colors and effect, launcher shortcuts, share to Bigly, emoji support, export as image, 13 color presets, and a notice about Google's developer verification (FreeDroidWarn).

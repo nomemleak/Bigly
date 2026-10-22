@@ -8,3 +8,8 @@ build/
 .externalNativeBuild
 .cxx
 .kotlin/
+
+# Release signing keys never go in the repository
+*.jks
+*.p12
+release.keystore

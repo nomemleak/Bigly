@@ -11,15 +11,36 @@ android {
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "app.bigly"
+        applicationId = "io.github.nomemleak.bigly"
         minSdk = 26
         targetSdk = 36
-        versionCode = 2
-        versionName = "1.1.0"
+        versionCode = 3
+        versionName = "1.2.0"
+    }
+
+    signingConfigs {
+        // Shared debug key, so every CI debug build can update the previous one.
+        getByName("debug") {
+            storeFile = file("debug.keystore")
+            storePassword = "android"
+            keyAlias = "androiddebugkey"
+            keyPassword = "android"
+        }
+        // Release key, given by CI secrets only. F-Droid signs its own builds.
+        val releaseStore = System.getenv("BIGLY_KEYSTORE_FILE")
+        if (releaseStore != null) {
+            create("release") {
+                storeFile = file(releaseStore)
+                storePassword = System.getenv("BIGLY_KEYSTORE_PASSWORD")
+                keyAlias = "bigly"
+                keyPassword = System.getenv("BIGLY_KEYSTORE_PASSWORD")
+            }
+        }
     }
 
     buildTypes {
         release {
+            signingConfigs.findByName("release")?.let { signingConfig = it }
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(
@@ -40,7 +61,7 @@ android {
 
     buildFeatures {
         compose = true
-        buildConfig = false
+        buildConfig = true
     }
 
     // F-Droid: no opaque, Google-signed dependency metadata in the APK.
@@ -74,6 +95,8 @@ dependencies {
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.material.icons.core)
     debugImplementation(libs.androidx.compose.ui.tooling)
+
+    implementation(libs.freedroidwarn)
 
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)

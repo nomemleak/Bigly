@@ -4,6 +4,14 @@
 
 **Affichez n'importe quel texte en lettres géantes sur tout l'écran.** · [English version](README.md)
 
+<p align="center">
+  <a href="https://github.com/nomemleak/Bigly/releases/latest"><img src="https://raw.githubusercontent.com/Kunzisoft/Github-badge/main/get-it-on-github.png" alt="Disponible sur GitHub" height="80"></a>
+  <a href="https://apps.obtainium.imranr.dev/redirect?r=obtainium://add/https://github.com/nomemleak/Bigly"><img src="https://raw.githubusercontent.com/ImranR98/Obtainium/main/assets/graphics/badge_obtainium.png" alt="Disponible sur Obtainium" height="54"></a>
+  <a href="https://f-droid.org/packages/io.github.nomemleak.bigly/"><img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png" alt="Disponible sur F-Droid" height="80"></a>
+</p>
+
+<p align="center"><sub>Le lien F-Droid fonctionnera une fois Bigly accepté dans F-Droid.</sub></p>
+
 Bigly est une petite application Android libre et open source. Tapez un message, appuyez sur **Afficher**, et brandissez votre téléphone : dans un concert, une salle bruyante, à l'aéroport, ou pour parler à quelqu'un de l'autre côté de la rue.
 
 ## Fonctions
@@ -58,9 +66,13 @@ Chaque push sur `main` est aussi compilé par GitHub Actions. Le dernier APK deb
 |---|---|
 | Langage | Kotlin, Jetpack Compose, Material 3 |
 | Android | 8.0+ (minSdk 26), cible l'API 36 |
-| Identifiant | `app.bigly` (debug : `app.bigly.debug`) |
+| Identifiant | `io.github.nomemleak.bigly` (debug : `io.github.nomemleak.bigly.debug`) |
 
 L'organisation du code est décrite dans [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md). Les métadonnées F-Droid se trouvent dans `fastlane/metadata/android`.
+
+## Vérification des développeurs par Google
+
+Google prévoit d'exiger, à partir de 2026/2027, que les développeurs de toute application sur les appareils Android certifiés transmettent leur identité à Google. Bigly ne le fera pas. Au premier lancement de chaque nouvelle version, un court message de [FreeDroidWarn](https://github.com/woheller69/FreeDroidWarn) (Apache 2.0) l'explique et renvoie vers [Keep Android Open](https://keepandroidopen.org/). Ouvrir ces liens reste votre choix : Bigly lui-même n'a toujours aucun accès réseau.
 
 ## Licence
 
