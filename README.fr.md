@@ -6,7 +6,7 @@
 
 <p align="center">
   <a href="https://github.com/nomemleak/Bigly/releases/latest"><img src="https://raw.githubusercontent.com/Kunzisoft/Github-badge/main/get-it-on-github.png" alt="Disponible sur GitHub" height="80"></a>
-  <a href="https://apps.obtainium.imranr.dev/redirect?r=obtainium://add/https://github.com/nomemleak/Bigly"><img src="https://raw.githubusercontent.com/ImranR98/Obtainium/main/assets/graphics/badge_obtainium.png" alt="Disponible sur Obtainium" height="54"></a>
+  <a href="https://apps.obtainium.imranr.dev/redirect?r=obtainium://add/https://github.com/nomemleak/Bigly"><img src="https://raw.githubusercontent.com/ImranR98/Obtainium/main/assets/graphics/badge_obtainium.png" alt="Disponible sur Obtainium" height="80"></a>
   <a href="https://f-droid.org/packages/io.github.nomemleak.bigly/"><img src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png" alt="Disponible sur F-Droid" height="80"></a>
 </p>
 
