@@ -36,7 +36,7 @@ bigly/
 ├── fastlane/metadata/android/{en-US,fr-FR}/
 │   ├── title.txt, short_description.txt, full_description.txt
 │   ├── changelogs/1.txt
-│   └── images/icon.png, images/phoneScreenshots/
+│   └── images/icon.png, images/phoneScreenshots/1-4.png
 └── app/
     ├── build.gradle.kts, proguard-rules.pro
     └── src/

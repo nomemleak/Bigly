@@ -14,6 +14,15 @@
 
 Bigly is a small, free and open source Android app. Type a message, tap **Show**, and hold up your phone: at a concert, in a noisy room, at the airport, or to talk with someone across the street.
 
+<p align="center">
+  <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/1.png" alt="Home screen" width="200">
+  <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/2.png" alt="Full screen message" width="200">
+  <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/3.png" alt="Display controls" width="200">
+</p>
+<p align="center">
+  <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/4.png" alt="Landscape" width="460">
+</p>
+
 ## Features
 
 - **Live preview**: the big input area shows your message in its final colors and font. Color themes, display mode and effects sit right below it, no need to open the settings.
