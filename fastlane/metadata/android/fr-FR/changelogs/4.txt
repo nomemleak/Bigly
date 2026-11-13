@@ -1,0 +1,1 @@
+Le bouton d'orientation fait maintenant pivoter l'écran dès le premier appui.
